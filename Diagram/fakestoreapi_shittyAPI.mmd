@@ -1,17 +1,16 @@
 classDiagram
 direction LR
 
-%% FIX IT
 class ProductRead{
-    +product_id Int
-    +name String
-    +description string
-    +price double
-    +unit String
-    +image String
-    +Int discount
-    +available boolean
-    +brand string
+    +int product_id
+    +String name
+    +String description
+    +double price
+    +String unit
+    +String image
+    +int discount
+    +boolean available
+    +String brand
     +String category
     +List<ReviewProductRead> reviews
 }
@@ -53,8 +52,19 @@ class OrderCreate{
     +List<ItemCartRead> items
 }
 
-class OrderCreateResponce{
+class OrderCreateResponse{
     +int order_id
     +String status
     +String message
 }
+
+ProductRead "1" *-- "0..*" ReviewProductRead : reviews
+ReviewProductRead --> "1" UserRead : author
+CartRead --> "1" UserRead : user
+CartRead "1" *-- "0..*" ItemCartRead : items
+ItemCartRead --> "1" ProductRead : product
+OrderRead --> "1" UserRead : user
+OrderRead "1" *-- "1..*" ItemCartRead : items
+OrderCreate --> "1" UserRead : user
+OrderCreate "1" *-- "1..*" ItemCartRead : items
+OrderCreateResponse ..> OrderRead : returns
