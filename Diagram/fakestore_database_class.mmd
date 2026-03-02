@@ -10,14 +10,14 @@ class Product{
     +String image
     +int discount
     +boolean available
-    +int id_brand
-    +int id_category
+    +int brand_id
+    +int category_id
 }
 
 class Review{
     +int review_id
-    +int id_user
-    +int id_product
+    +int user_id
+    +int product_id
     +int rating
     +String comment
 }
@@ -39,38 +39,45 @@ class User{
     +String password
 }
 
-class Item{
-    +int item_id
-    +int id_product
-    +int id_cart
-    +int quantity
-}
-
 class Cart{
     +int cart_id
-    +int id_user
+    +int user_id
 }
 
 class CartItem{
-    +int cartitem_id
-    +int id_user
-    +int id_cart
+    +int cart_item_id
+    +int cart_id
+    +int product_id
+    +int quantity
 }
 
 class Order{
     +int order_id
-    +int id_user
-    +int id_orderstatus
+    +int user_id
+    +int order_status_id
     +double total_price
 }
 
 class OrderItem{
-    +int orderitem_id
-    +int id_user
-    +int id_order
+    +int order_item_id
+    +int order_id
+    +int product_id
+    +int quantity
 }
 
 class OrderStatus{
-    +int orderstatus_id
+    +int order_status_id
     +String name
 }
+
+Brand "1" <-- "0..*" Product : brand_id
+Category "1" <-- "0..*" Product : category_id
+User "1" <-- "0..*" Review : user_id
+Product "1" <-- "0..*" Review : product_id
+User "1" <-- "0..*" Cart : user_id
+Cart "1" *-- "0..*" CartItem : items
+Product "1" <-- "0..*" CartItem : product_id
+User "1" <-- "0..*" Order : user_id
+OrderStatus "1" <-- "0..*" Order : order_status_id
+Order "1" *-- "1..*" OrderItem : items
+Product "1" <-- "0..*" OrderItem : product_id
