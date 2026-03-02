@@ -1,0 +1,39 @@
+classDiagram
+direction LR
+
+%% FIX IT
+class ProductRead{
+    +product_id Int
+    +name String
+    +description string
+    +price double
+    +unit String
+    +image String
+    +Int discount
+    +available boolean
+    +brand string
+    +String category
+    +List<Review> reviews
+}
+
+class ReviewRead{
+    +int user_id
+    +int rating
+    +String comment
+}
+
+class UserRead{
+    +int user_id
+    +String username
+    +String email
+    +String password
+}
+
+class CartRead{
+    
+}
+
+
+
+
+
