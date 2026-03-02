@@ -1,0 +1,70 @@
+classDiagram
+direction LR
+
+class ProductRead{
+    +int product_id
+    +String name
+    +String description
+    +double price
+    +String unit
+    +String image
+    +int discount
+    +boolean available
+    +String brand
+    +String category
+    +List<ReviewProductRead> reviews
+}
+
+class ReviewProductRead{
+    +int user_id
+    +int rating
+    +String comment
+}
+
+class UserRead{
+    +int user_id
+    +String username
+    +String email
+    +String password
+}
+
+class CartRead{
+    +int cart_id
+    +int user_id
+    +List<ItemCartRead> items
+}
+
+class ItemCartRead{
+    +int product_id
+    +int quantity
+}
+
+class OrderRead{
+    +int order_id
+    +int user_id
+    +String status
+    +double total_price
+    +List<ItemCartRead> items
+}
+
+class OrderCreate{
+    +int user_id
+    +List<ItemCartRead> items
+}
+
+class OrderCreateResponse{
+    +int order_id
+    +String status
+    +String message
+}
+
+ProductRead "1" *-- "0..*" ReviewProductRead : reviews
+ReviewProductRead --> "1" UserRead : author
+CartRead --> "1" UserRead : user
+CartRead "1" *-- "0..*" ItemCartRead : items
+ItemCartRead --> "1" ProductRead : product
+OrderRead --> "1" UserRead : user
+OrderRead "1" *-- "1..*" ItemCartRead : items
+OrderCreate --> "1" UserRead : user
+OrderCreate "1" *-- "1..*" ItemCartRead : items
+OrderCreateResponse ..> OrderRead : returns

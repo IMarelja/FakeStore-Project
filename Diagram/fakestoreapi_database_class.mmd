@@ -1,0 +1,76 @@
+classDiagram
+direction LR
+
+class Product{
+    +int product_id
+    +String name
+    +String description
+    +double price
+    +String unit
+    +String image
+    +int discount
+    +boolean available
+    +int id_brand
+    +int id_category
+}
+
+class Review{
+    +int review_id
+    +int id_user
+    +int id_product
+    +int rating
+    +String comment
+}
+
+class Category{
+    +int category_id
+    +String name
+}
+
+class Brand{
+    +int brand_id
+    +String name
+}
+
+class User{
+    +int user_id
+    +String username
+    +String email
+    +String password
+}
+
+class Item{
+    +int item_id
+    +int id_product
+    +int id_cart
+    +int quantity
+}
+
+class Cart{
+    +int cart_id
+    +int id_user
+}
+
+class CartItem{
+    +int cartitem_id
+    +int id_user
+    +int id_cart
+}
+
+class Order{
+    +int order_id
+    +int id_user
+    +int id_orderstatus
+    +double total_price
+}
+
+class OrderItem{
+    +int orderitem_id
+    +int id_user
+    +int id_order
+}
+
+class OrderStatus{
+    +int orderstatus_id
+    +String name
+}
