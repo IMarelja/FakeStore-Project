@@ -1,0 +1,15 @@
+bin/
+obj/
+
+Document/
+
+.vs/
+.vscode/
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+*.swp
+*.DS_Store
