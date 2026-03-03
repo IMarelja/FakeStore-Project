@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStore.ViewModel", "Fake
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStoreApi.View", "FakeStoreApi.View\FakeStoreApi.View.csproj", "{960747BB-8C38-487C-81B7-1A07F5340D3F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStoreApi.Rest", "FakeStoreApi.Rest\FakeStoreApi.Rest.csproj", "{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{960747BB-8C38-487C-81B7-1A07F5340D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{960747BB-8C38-487C-81B7-1A07F5340D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{960747BB-8C38-487C-81B7-1A07F5340D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
