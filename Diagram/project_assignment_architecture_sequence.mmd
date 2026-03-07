@@ -1,0 +1,74 @@
+flowchart LR
+    User[User]
+
+    subgraph Client["Client Desktop/Web Application"]
+        UI[GUI]
+        Roles[Roles: Read-only / Full access]
+        Switch[API switch: Public or Custom REST]
+    end
+
+    subgraph SoapFlow["SOAP Search Flow"]
+        XmlBuild[Generate XML from REST data]
+        XPath[XPath filter by search term]
+        SoapSvc[SOAP service response]
+
+        subgraph JakartaFlow["Jakarta XML Validation"]
+            Jakarta[Validate generated XML rules]
+        end
+    end
+
+    subgraph WeatherFlow["gRPC Weather Service"]
+        Grpc[gRPC server]
+    end
+
+    subgraph RestLayer["REST / GraphQL Layer"]
+        PublicApi[Public REST API]
+        CustomApi[Custom REST API]
+        Crud[GET / POST / PUT / DELETE]
+        JWT[JWT access + refresh tokens]
+        GraphQL[GraphQL endpoint]
+    end
+
+    subgraph RestPost["REST POST Import Flow"]
+        CheckJsonXML[XML and JSON checker]
+        XSD[XSD validation]
+        JSONSchema[JSON Schema validation]
+        Errors[Validation errors to user]
+        Save[Persist valid entity]
+    end
+
+    DB[(Application Database)]
+    DHMZ[(DHMZ XML Feed)]
+
+    User --> UI
+    UI --> Roles
+    UI --> Switch
+
+    CheckJsonXML --> PublicApi
+    PublicApi --> CheckJsonXML
+    CheckJsonXML -->|Is XML| XSD
+    CheckJsonXML -->|Is JSON| JSONSchema
+    XSD -->|invalid| Errors
+    JSONSchema -->|invalid| Errors
+    XSD -->|valid| Save
+    JSONSchema -->|valid| Save
+    Save --> DB
+
+    PublicApi --> XmlBuild
+    CustomApi --> XmlBuild
+    XPath --> SoapSvc
+
+    XmlBuild --> Jakarta
+    Jakarta --> XPath
+
+    UI --> |Search by city name or partial name| Grpc
+    Grpc --> |Responce| UI
+    DHMZ --> Grpc
+
+    Switch --> PublicApi
+    Switch --> CustomApi
+    Roles --> CustomApi
+    CustomApi --> Crud
+    CustomApi --> JWT
+    Crud --> GraphQL
+    GraphQL --> DB
