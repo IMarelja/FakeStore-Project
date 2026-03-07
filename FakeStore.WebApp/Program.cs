@@ -1,7 +1,15 @@
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+var grpcAddress = builder.Configuration["GrpcServer"]!;
+builder.Services.AddGrpcClient<FakeStore.gRPC.WeatherService.WeatherServiceClient>(o =>
+{
+    o.Address = new Uri(grpcAddress);
+});
 
 var app = builder.Build();
 

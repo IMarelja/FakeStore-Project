@@ -1,0 +1,52 @@
+@model FakeStore.WebApp.Models.WeatherViewModel
+@{
+    ViewData["Title"] = "Weather Search";
+}
+
+<h2>Croatian Weather (DHMZ)</h2>
+
+<form asp-controller="Weather" asp-action="Search" method="get" class="d-flex gap-2 my-4">
+    <input type="text"
+           name="city"
+           value="@Model.SearchCity"
+           class="form-control"
+           placeholder="Enter city name (e.g. Zagreb)"
+           style="max-width: 320px;" />
+    <button type="submit" class="btn btn-primary">Search</button>
+</form>
+
+@if (Model.Searched && !string.IsNullOrWhiteSpace(Model.SearchCity))
+{
+    if (Model.Found)
+    {
+        <div class="card" style="max-width: 480px;">
+            <div class="card-header">
+                <strong>@Model.City</strong>
+                <span class="text-muted ms-2" style="font-size:.875rem;">@Model.Date &mdash; term @Model.Term h</span>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Condition</span><span>@Model.Description</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Temperature</span><span>@Model.Temperature &deg;C</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Humidity</span><span>@Model.Humidity %</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Pressure</span><span>@Model.Pressure hPa (@Model.PressureTendency)</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Wind</span><span>@Model.WindDirection @Model.WindSpeed km/h</span>
+                </li>
+            </ul>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning" style="max-width: 480px;">
+            No data found for <strong>@Model.SearchCity</strong>. Try a different city name.
+        </div>
+    }
+}
