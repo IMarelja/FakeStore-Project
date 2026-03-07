@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option csharp_namespace = "FakeStore.gRPC";
+
+package weather;
+
+service WeatherService {
+  rpc GetWeather (WeatherRequest) returns (WeatherReply);
+}
+
+message WeatherRequest {
+  string city = 1;
+}
+
+message WeatherReply {
+  bool found = 1;
+  string city = 2;
+  string temperature = 3;
+  string humidity = 4;
+  string pressure = 5;
+  string pressure_tendency = 6;
+  string wind_direction = 7;
+  string wind_speed = 8;
+  string description = 9;
+  string date = 10;
+  string term = 11;
+}
