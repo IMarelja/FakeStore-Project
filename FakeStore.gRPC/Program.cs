@@ -7,7 +7,6 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
-app.MapGrpcService<GreeterService>();
 app.MapGrpcService<WeatherService>();
 app.MapGet("/", () => "gRPC server running.");
 
