@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStore.ViewModel", "FakeStore.ViewModel\FakeStore.ViewModel.csproj", "{6CF77410-E279-4466-A050-B68D7A190B78}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{6CF77410-E279-4466-A050-B68D7A190B78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStoreApi.View", "FakeStoreApi.View\FakeStoreApi.View.csproj", "{960747BB-8C38-487C-81B7-1A07F5340D3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApisView", "ApisView\ApisView.csproj", "{960747BB-8C38-487C-81B7-1A07F5340D3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStoreApi.Rest", "FakeStoreApi.Rest\FakeStoreApi.Rest.csproj", "{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestApi", "RestApi\RestApi.csproj", "{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStore.gRPC", "FakeStore.gRPC\FakeStore.gRPC.csproj", "{A5CAC98F-AAF3-4EED-8109-DA41DFE87E53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPC", "gRPC\gRPC.csproj", "{A5CAC98F-AAF3-4EED-8109-DA41DFE87E53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStore.Soap", "FakeStore.Soap\FakeStore.Soap.csproj", "{B93630B6-07CA-4B34-AD6A-192E7C171998}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soap", "Soap\Soap.csproj", "{B93630B6-07CA-4B34-AD6A-192E7C171998}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakeStore.WebApp", "FakeStore.WebApp\FakeStore.WebApp.csproj", "{4EE12764-6D80-449B-8116-3D1478F32838}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{4EE12764-6D80-449B-8116-3D1478F32838}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

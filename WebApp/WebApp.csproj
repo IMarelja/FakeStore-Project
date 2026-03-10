@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\FakeStore.ViewModel\FakeStore.ViewModel.csproj" />
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\FakeStore.gRPC\Protos\weather.proto" GrpcServices="Client" />
+    <Protobuf Include="..\gRPC\Protos\weather.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

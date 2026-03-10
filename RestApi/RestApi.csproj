@@ -4,8 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>FakeStoreApi.Rest</AssemblyName>
-    <RootNamespace>FakeStoreApi.Rest</RootNamespace>
+    <AssemblyName>RestApi</AssemblyName>
+    <RootNamespace>RestApi</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FakeStoreApi.View\FakeStoreApi.View.csproj" />
+    <ProjectReference Include="..\ApisView\ApisView.csproj" />
   </ItemGroup>
 
 </Project>
