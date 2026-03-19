@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApisView\ApisView.csproj" />
+    <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 
 </Project>
