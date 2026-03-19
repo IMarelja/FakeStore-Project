@@ -1,0 +1,11 @@
+namespace MyGraphQLApi.Models;
+
+public class Order
+{
+    public int OrderId { get; set; }
+    public int UserId { get; set; }
+    public int OrderStatus { get; set; }
+    public decimal TotalPrice { get; set; }
+
+    public List<OrderItem> Items { get; set; } = [];
+}
