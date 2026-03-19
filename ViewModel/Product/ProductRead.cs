@@ -2,25 +2,26 @@ namespace FakeStore.ViewModel;
 
 public class ProductRead
 {
-    public int ProductId { get; set; }
+    public int product_id { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string name { get; set; } = string.Empty;
 
-    public string Description { get; set; } = string.Empty;
+    public string description { get; set; } = string.Empty;
 
-    public double Price { get; set; }
+    public double price { get; set; }
 
-    public string Unit { get; set; } = string.Empty;
+    public string unit { get; set; } = string.Empty;
 
-    public string Image { get; set; } = string.Empty;
+    public string image { get; set; } = string.Empty;
 
-    public int Discount { get; set; }
+    public int discount { get; set; }
 
-    public bool Available { get; set; }
+    public bool availability { get; set; }
 
-    public string Brand { get; set; } = string.Empty;
+    public string brand { get; set; } = string.Empty;
 
-    public string Category { get; set; } = string.Empty;
+    public string category { get; set; } = string.Empty;
+    public double rating { get; set; }
 
-    public List<ReviewProductRead> Reviews { get; set; } = [];
+    public List<ReviewProductRead> reviews { get; set; } = [];
 }

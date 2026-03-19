@@ -2,7 +2,7 @@ namespace FakeStore.ViewModel;
 
 public class ItemCartRead
 {
-    public int ProductId { get; set; }
+    public int product_id { get; set; }
 
-    public int Quantity { get; set; }
+    public int quantity { get; set; }
 }

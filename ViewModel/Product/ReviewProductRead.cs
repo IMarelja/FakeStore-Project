@@ -2,9 +2,9 @@ namespace FakeStore.ViewModel;
 
 public class ReviewProductRead
 {
-    public int UserId { get; set; }
+    public int user_id { get; set; }
 
-    public int Rating { get; set; }
+    public int rating { get; set; }
 
-    public string Comment { get; set; } = string.Empty;
+    public string comment { get; set; } = string.Empty;
 }
