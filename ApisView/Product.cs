@@ -1,4 +1,4 @@
-namespace FakeStoreApi.View.Database;
+namespace FakeStore.View;
 
 public class Product
 {
@@ -18,7 +18,9 @@ public class Product
 
     public bool Available { get; set; }
 
-    public int BrandId { get; set; }
+    public string Brand { get; set; } = string.Empty;
 
-    public int CategoryId { get; set; }
+    public double Rating { get; set; } 
+
+    public List<Review> Reviews { get; set; } = []; 
 }

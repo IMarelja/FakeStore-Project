@@ -1,4 +1,4 @@
-namespace FakeStoreApi.View.Database;
+namespace FakeStore.View;
 
 public class CartItem
 {
