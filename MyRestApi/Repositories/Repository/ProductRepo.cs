@@ -59,7 +59,16 @@ public class ProductRepo : IProductRepo
         const string query = """
             {
               products {
-                productId name description price unit image discount available brand rating
+                productId 
+                name 
+                description 
+                price 
+                unit 
+                image 
+                discount 
+                available 
+                brand 
+                rating
                 reviews { reviewId userId rating comment }
               }
             }
@@ -77,8 +86,22 @@ public class ProductRepo : IProductRepo
         const string query = """
             query($id: Int!) {
               product(id: $id) {
-                productId name description price unit image discount available brand rating
-                reviews { reviewId userId rating comment }
+                productId 
+                name 
+                description 
+                price 
+                unit 
+                image 
+                discount 
+                available 
+                brand 
+                rating
+                reviews { 
+                    reviewId 
+                    userId 
+                    rating 
+                    comment 
+                }
               }
             }
             """;
@@ -97,7 +120,16 @@ public class ProductRepo : IProductRepo
         const string query = """
             mutation($input: ProductInput!) {
               createProduct(input: $input) {
-                productId name description price unit image discount available brand rating
+                productId 
+                name 
+                description 
+                price 
+                unit 
+                image 
+                discount 
+                available 
+                brand 
+                rating
               }
             }
             """;
@@ -114,7 +146,16 @@ public class ProductRepo : IProductRepo
         const string query = """
             mutation($id: Int!, $input: ProductInput!) {
               updateProduct(id: $id, input: $input) {
-                productId name description price unit image discount available brand rating
+                productId 
+                name 
+                description 
+                price 
+                unit 
+                image 
+                discount 
+                available 
+                brand 
+                rating
               }
             }
             """;
