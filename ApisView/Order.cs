@@ -6,7 +6,7 @@ public class Order
 
     public int UserId { get; set; }
 
-    public int OrderStatus { get; set; }
+    public string OrderStatus { get; set; } = string.Empty;
 
     public decimal TotalPrice { get; set; }
 
