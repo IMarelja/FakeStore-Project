@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FakeStore.ViewModel;
-using MyRestApi.Repositories;
+using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
 
@@ -8,25 +8,25 @@ namespace MyRestApi.Controller;
 [Route("api/[controller]")]
 public class ProductController : ControllerBase
 {
-    private readonly IProductRepo _repo;
+    private readonly IProductService _service;
 
-    public ProductController(IProductRepo repo)
+    public ProductController(IProductService service)
     {
-        _repo = repo;
+        _service = service;
     }
 
     // GET /api/product
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ProductRead>>> GetAll()
     {
-        return Ok(await _repo.GetAllAsync());
+        return Ok(await _service.GetAllAsync());
     }
 
     // GET /api/product/{id}
     [HttpGet("{id}")]
     public async Task<ActionResult<ProductRead>> GetById(int id)
     {
-        var product = await _repo.GetByIdAsync(id);
+        var product = await _service.GetByIdAsync(id);
         return product is null ? NotFound() : Ok(product);
     }
 
@@ -34,7 +34,7 @@ public class ProductController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProductRead>> Create([FromBody] ProductCreate req)
     {
-        var created = await _repo.CreateAsync(req);
+        var created = await _service.CreateAsync(req);
         return CreatedAtAction(nameof(GetById), new { id = created.product_id }, created);
     }
 
@@ -42,7 +42,7 @@ public class ProductController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<ProductRead>> Update(int id, [FromBody] ProductUpdate req)
     {
-        var updated = await _repo.UpdateAsync(id, req);
+        var updated = await _service.UpdateAsync(id, req);
         return updated is null ? NotFound() : Ok(updated);
     }
 
@@ -50,6 +50,6 @@ public class ProductController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        return await _repo.DeleteAsync(id) ? NoContent() : NotFound();
+        return await _service.DeleteAsync(id) ? NoContent() : NotFound();
     }
 }

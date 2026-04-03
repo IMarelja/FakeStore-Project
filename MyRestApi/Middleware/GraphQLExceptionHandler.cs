@@ -12,6 +12,15 @@ public class GraphQLExceptionHandler : IExceptionHandler
     {
         var (status, title) = exception switch
         {
+            UnauthorizedException =>
+                (StatusCodes.Status401Unauthorized, "Unauthorized."),
+
+            ConflictException =>
+                (StatusCodes.Status409Conflict, "Conflict."),
+
+            NotFoundException =>
+                (StatusCodes.Status404NotFound, "Not found."),
+
             HttpRequestException { InnerException: System.Net.Sockets.SocketException } =>
                 (StatusCodes.Status503ServiceUnavailable, "GraphQL service is unreachable."),
 

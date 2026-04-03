@@ -1,8 +1,8 @@
 using FakeStore.ViewModel;
 
-namespace MyRestApi.Repositories;
+namespace MyRestApi.Services;
 
-public interface IProductRepo
+public interface IProductService
 {
     Task<List<ProductRead>> GetAllAsync();
     Task<ProductRead?> GetByIdAsync(int id);

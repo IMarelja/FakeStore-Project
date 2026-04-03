@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FakeStore.ViewModel;
-using MyRestApi.Repositories;
+using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
 
@@ -8,26 +8,25 @@ namespace MyRestApi.Controller;
 [Route("api/[controller]")]
 public class AuthenticationController : ControllerBase
 {
-    private readonly IAuthenticationRepo _repo;
+    private readonly IAuthenticationService _service;
 
-    public AuthenticationController(IAuthenticationRepo repo)
+    public AuthenticationController(IAuthenticationService service)
     {
-        _repo = repo;
+        _service = service;
     }
 
     // POST /api/authentication/login
     [HttpPost("login")]
-    public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest req)
+    public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginRequest req)
     {
-        var result = await _repo.LoginAsync(req);
-        return result is null ? Unauthorized() : Ok(result);
+        return Ok(await _service.LoginAsync(req));
     }
 
     // POST /api/authentication/register
     [HttpPost("register")]
-    public async Task<ActionResult<LoginResponse>> Register([FromBody] RegisterRequest req)
+    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] RegisterRequest req)
     {
-        var result = await _repo.RegisterAsync(req);
+        var result = await _service.RegisterAsync(req);
         return CreatedAtAction(nameof(Login), result);
     }
 }

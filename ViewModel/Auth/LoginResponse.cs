@@ -1,6 +1,6 @@
 namespace FakeStore.ViewModel;
 
-public class LoginResponse
+public class AuthenticationResponse
 {
     public string token { get; set; } = string.Empty;
 }
