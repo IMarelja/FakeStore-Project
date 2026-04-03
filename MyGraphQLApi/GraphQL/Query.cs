@@ -13,6 +13,12 @@ public class Query
     public Task<User?> GetUser(int id, [Service] FakeStoreDbContext db) =>
         db.Users.FirstOrDefaultAsync(u => u.UserId == id);
 
+    public Task<User?> GetUserByUsername(string username, [Service] FakeStoreDbContext db) =>
+        db.Users.FirstOrDefaultAsync(u => u.Username == username);
+
+    public Task<User?> GetUserByEmail(string email, [Service] FakeStoreDbContext db) =>
+        db.Users.FirstOrDefaultAsync(u => u.Email == email);
+
     // Product
     public IQueryable<Product> GetProducts([Service] FakeStoreDbContext db) =>
         db.Products.Include(p => p.Reviews);
