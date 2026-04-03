@@ -19,5 +19,5 @@ public record CartInput(int UserId);
 
 public record CartItemInput(int CartId, int ProductId, int Quantity);
 
-public record OrderInput(int UserId, int OrderStatus, decimal TotalPrice);
+public record OrderInput(int UserId, string OrderStatus, decimal TotalPrice);
 public record OrderItemInput(int OrderId, int ProductId, int Quantity);
