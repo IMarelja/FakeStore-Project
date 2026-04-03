@@ -25,7 +25,7 @@ public class UserService(IHttpClientFactory httpFactory, IUserRepository repo, I
             Username = u.Username,
             Email    = u.Email,
             Password = u.Password,
-            Role     = u.Role
+            Role     = string.IsNullOrWhiteSpace(u.Role) ? "read-only" : u.Role
         });
 
         await repo.SeedAsync(users);
