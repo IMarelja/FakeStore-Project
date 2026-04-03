@@ -1,11 +1,15 @@
 services:
   postgres-medical:
     image: postgres:18
-    container_name: postgres-fakestore
+    container_name: fakestore-iis
     ports:
-      - "5432:5432"
+      - "5444:5432"
     environment:
       POSTGRES_DB: "fakestore"
       POSTGRES_PASSWORD: "password"
     volumes:
       - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - postgres_data_fakestore:/var/lib/postgresql
+
+volumes:
+  postgres_data_fakestore:
