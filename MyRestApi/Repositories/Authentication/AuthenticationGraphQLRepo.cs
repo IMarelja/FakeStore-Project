@@ -5,7 +5,7 @@ using FakeStore.ViewModel;
 
 namespace MyRestApi.Repositories;
 
-public class AuthenticationRepo : IAuthenticationRepo
+public class AuthenticationGraphQLRepo : IAuthenticationRepo
 {
     private readonly HttpClient _http;
 
@@ -19,7 +19,7 @@ public class AuthenticationRepo : IAuthenticationRepo
         PropertyNameCaseInsensitive = true
     };
 
-    public AuthenticationRepo(IHttpClientFactory factory)
+    public AuthenticationGraphQLRepo(IHttpClientFactory factory)
     {
         _http = factory.CreateClient("graphql");
     }
