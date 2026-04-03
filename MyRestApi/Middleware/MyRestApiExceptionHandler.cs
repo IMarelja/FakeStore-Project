@@ -12,6 +12,9 @@ public class MyRestApiExceptionHandler : IExceptionHandler
     {
         var (status, title) = exception switch
         {
+            NotImplementedException =>
+                (StatusCodes.Status501NotImplemented, "Not implemented"),
+
             UnauthorizedException =>
                 (StatusCodes.Status401Unauthorized, "Unauthorized."),
 

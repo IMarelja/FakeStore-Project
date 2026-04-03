@@ -32,6 +32,12 @@ builder.Services.AddHttpClient("graphql", client =>
     client.BaseAddress = new Uri(baseUrl);
 });
 
+builder.Services.AddHttpClient("publicapi", client =>
+{
+    var baseUrl = builder.Configuration["PublicApi:BaseUrl"]!;
+    client.BaseAddress = new Uri(baseUrl);
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

@@ -1,38 +1,70 @@
-
+using System.Text.Json;
 using FakeStore.View;
 using FakeStore.ViewModel;
+using MyRestApi.DTO;
+using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
 
-public class ProductPublicApiRepo : IAuthenticationRepo
+public class ProductPublicApiRepo(IHttpClientFactory factory) : IProductRepo
 {
-    public ProductPublicApiRepo()
+    private readonly HttpClient _http = factory.CreateClient("publicapi");
+
+    private static readonly JsonSerializerOptions _readOptions = new()
     {
-        
+        PropertyNameCaseInsensitive = true
+    };
+
+    public async Task<List<Product>> GetAllAsync()
+    {
+        try
+        {
+            var dtos = await _http.GetFromJsonAsync<List<ProductApiDto>>("products", _readOptions) ?? [];
+            return dtos.Select(ToModel).ToList();
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new RestApiServiceException("REST API service is unavailable.", ex);
+        }
     }
 
-    public Task<User> CreateUserAsync(RegisterRequest req)
+    private static Product ToModel(ProductApiDto dto) => new()
     {
-        throw new NotImplementedException();
+        ProductId   = dto.ProductId,
+        Name        = dto.Name,
+        Description = dto.Description,
+        Price       = dto.Price,
+        Unit        = dto.Unit,
+        Image       = dto.Image,
+        Discount    = dto.Discount,
+        Available   = dto.Availability,
+        Brand       = dto.Brand,
+        Rating      = dto.Rating,
+        Reviews     = dto.Reviews.Select(r => new Review
+        {
+            UserId  = r.UserId,
+            Rating  = r.Rating,
+            Comment = r.Comment
+        }).ToList()
+    };
+
+    public async Task<Product?> GetByIdAsync(int id)
+    {
+        throw new MyRestApi.Middleware.NotImplementedException("Not implemented");
     }
 
-    public Task<bool> EmailExistsAsync(string email)
+    public async Task<Product> CreateAsync(ProductCreate req)
     {
-        throw new NotImplementedException();
+        throw new MyRestApi.Middleware.NotImplementedException("Not implemented");
     }
 
-    public Task<User?> UserByEmailAsync(string email)
+    public async Task<Product?> UpdateAsync(int id, ProductUpdate req)
     {
-        throw new NotImplementedException();
+        throw new MyRestApi.Middleware.NotImplementedException("Not implemented");
     }
 
-    public Task<User?> UserByUsernameAsync(string username)
+    public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> UsernameExistsAsync(string username)
-    {
-        throw new NotImplementedException();
+        throw new MyRestApi.Middleware.NotImplementedException("Not implemented");
     }
 }
