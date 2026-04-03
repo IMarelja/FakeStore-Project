@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using FakeStore.View;
 using FakeStore.ViewModel;
+using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
 
@@ -96,11 +97,18 @@ public class AuthenticationGraphQLRepo : IAuthenticationRepo
 
     private async Task<JsonElement> SendAsync(string query, object? variables = null)
     {
-        var body = JsonSerializer.Serialize(new { query, variables }, _writeOptions);
-        var response = await _http.PostAsync("graphql", new StringContent(body, Encoding.UTF8, "application/json"));
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var body = JsonSerializer.Serialize(new { query, variables }, _writeOptions);
+            var response = await _http.PostAsync("graphql", new StringContent(body, Encoding.UTF8, "application/json"));
+            response.EnsureSuccessStatusCode();
 
-        var json = await response.Content.ReadAsStringAsync();
-        return JsonDocument.Parse(json).RootElement.GetProperty("data").Clone();
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonDocument.Parse(json).RootElement.GetProperty("data").Clone();
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new GraphQLServiceException("GraphQL service is unavailable.", ex);
+        }
     }
 }

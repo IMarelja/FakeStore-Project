@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MyRestApi.Model;
+using MyRestApi.Repositories;
 using MyRestApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,11 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 
-builder.Services.AddScoped<MyRestApi.Repositories.IProductRepo, MyRestApi.Repositories.ProductRepo>();
-builder.Services.AddScoped<MyRestApi.Repositories.IAuthenticationRepo, MyRestApi.Repositories.AuthenticationRepo>();
+builder.Services.AddScoped<IProductRepo, ProductRepo>();
+builder.Services.AddScoped<IAuthenticationRepo, AuthenticationGraphQLRepo>();
 
-builder.Services.AddScoped<MyRestApi.Services.IProductService, MyRestApi.Services.ProductService>();
-builder.Services.AddScoped<MyRestApi.Services.IAuthenticationService, MyRestApi.Services.AuthenticationService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
@@ -23,7 +24,7 @@ builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddProblemDetails();
-builder.Services.AddExceptionHandler<MyRestApi.Middleware.GraphQLExceptionHandler>();
+builder.Services.AddExceptionHandler<MyRestApi.Middleware.MyRestApiExceptionHandler>();
 
 builder.Services.AddHttpClient("graphql", client =>
 {
