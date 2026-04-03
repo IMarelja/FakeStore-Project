@@ -10,7 +10,8 @@ public class ProductRepository(PostgresDbContext ctx) : IProductRepository
         ctx.Products.AddRange(products);
         await ctx.SaveChangesAsync();
 
-        ctx.Reviews.AddRange(reviews);
+        var validUserIds = ctx.Users.Select(u => u.UserId).ToHashSet();
+        ctx.Reviews.AddRange(reviews.Where(r => validUserIds.Contains(r.UserId)));
         await ctx.SaveChangesAsync();
     }
 }

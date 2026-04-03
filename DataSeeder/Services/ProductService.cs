@@ -1,14 +1,16 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using DataSeeder.Data;
 using DataSeeder.Models;
 using DataSeeder.Repositories;
 using FakeStore.View;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace DataSeeder.Services;
 
-public class ProductService(IHttpClientFactory httpFactory, IProductRepository repo, IConfiguration config) : IProductService
+public class ProductService(IHttpClientFactory httpFactory, IProductRepository repo, IConfiguration config, PostgresDbContext ctx) : IProductService
 {
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
@@ -33,13 +35,17 @@ public class ProductService(IHttpClientFactory httpFactory, IProductRepository r
             Rating      = p.Rating
         });
 
-        var reviews = apiProducts.SelectMany(p => p.Reviews.Select(r => new Review
-        {
-            ProductId = p.ProductId,
-            UserId    = r.UserId,
-            Rating    = r.Rating,
-            Comment   = r.Comment
-        }));
+        var validUserIds = (await ctx.Users.Select(u => u.UserId).ToListAsync()).ToHashSet();
+
+        var reviews = apiProducts.SelectMany(p => p.Reviews
+            .Where(r => validUserIds.Contains(r.UserId))
+            .Select(r => new Review
+            {
+                ProductId = p.ProductId,
+                UserId    = r.UserId,
+                Rating    = r.Rating,
+                Comment   = r.Comment
+            }));
 
         await repo.SeedAsync(products, reviews);
     }
