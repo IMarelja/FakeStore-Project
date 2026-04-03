@@ -14,7 +14,8 @@ public class Mutation
         {
             Username = input.Username,
             Email = input.Email,
-            Password = input.Password
+            Password = input.Password,
+            Role = input.Role
         };
         db.Users.Add(user);
         await db.SaveChangesAsync();
@@ -28,6 +29,7 @@ public class Mutation
         user.Username = input.Username;
         user.Email = input.Email;
         user.Password = input.Password;
+        user.Role = input.Role;
         await db.SaveChangesAsync();
         return user;
     }
