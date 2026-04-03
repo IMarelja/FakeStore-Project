@@ -32,6 +32,7 @@ public class ProductService(IHttpClientFactory httpFactory, IProductRepository r
             Discount    = p.Discount,
             Available   = p.Availability,
             Brand       = p.Brand,
+            Category    = p.Category,
             Rating      = p.Rating
         });
 

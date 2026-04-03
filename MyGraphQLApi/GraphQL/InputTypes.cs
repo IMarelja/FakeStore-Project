@@ -11,6 +11,7 @@ public record ProductInput(
     int Discount,
     bool Available,
     string Brand,
+    string Category,
     double Rating);
 
 public record ReviewInput(int UserId, int ProductId, int Rating, string Comment);

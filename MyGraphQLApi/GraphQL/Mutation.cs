@@ -57,6 +57,7 @@ public class Mutation
             Discount = input.Discount,
             Available = input.Available,
             Brand = input.Brand,
+            Category = input.Category,
             Rating = input.Rating
         };
         db.Products.Add(product);
@@ -76,6 +77,7 @@ public class Mutation
         product.Discount = input.Discount;
         product.Available = input.Available;
         product.Brand = input.Brand;
+        product.Category = input.Category;
         product.Rating = input.Rating;
         await db.SaveChangesAsync();
         return product;

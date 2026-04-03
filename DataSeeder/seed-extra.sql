@@ -9,16 +9,16 @@ WITH
     RETURNING user_id, username
   ),
   ins_products AS (
-    INSERT INTO product (name, description, price, unit, image, discount, available, brand, rating)
+    INSERT INTO product (name, description, price, unit, image, discount, available, brand, category, rating)
     VALUES
-        ('iPhone 15',         'Latest Apple smartphone',            999.99, 'piece', 'iphone15.jpg',      0,  TRUE, 'Apple',   4.5),
-        ('Galaxy S24',        'Samsung flagship smartphone',        849.99, 'piece', 'galaxys24.jpg',     10, TRUE, 'Samsung', 4.3),
-        ('Sony WH-1000XM5',   'Noise-cancelling headphones',        349.99, 'piece', 'sonywh1000xm5.jpg',  5, TRUE, 'Sony',    4.8),
-        ('Nike Air Max 90',   'Classic running shoes',              120.00, 'pair',  'airmax90.jpg',       0, TRUE, 'Nike',    4.2),
-        ('Adidas Ultraboost', 'High performance running shoes',     180.00, 'pair',  'ultraboost.jpg',    15, TRUE, 'Adidas',  4.6),
-        ('Apple Watch S9',    'Smartwatch with health tracking',    399.99, 'piece', 'applewatch9.jpg',    0, TRUE, 'Apple',   4.4),
-        ('Samsung 4K TV',     '55-inch 4K QLED television',        799.99, 'piece', 'samsungtv.jpg',     20, TRUE, 'Samsung', 4.1),
-        ('Nike Dri-FIT Tee',  'Moisture-wicking training t-shirt',  35.00, 'piece', 'drifit.jpg',         0, TRUE, 'Nike',    4.0)
+        ('iPhone 15',         'Latest Apple smartphone',            999.99, 'piece', 'iphone15.jpg',      0,  TRUE, 'Apple',   'Electronics', 4.5),
+        ('Galaxy S24',        'Samsung flagship smartphone',        849.99, 'piece', 'galaxys24.jpg',     10, TRUE, 'Samsung', 'Electronics', 4.3),
+        ('Sony WH-1000XM5',   'Noise-cancelling headphones',        349.99, 'piece', 'sonywh1000xm5.jpg',  5, TRUE, 'Sony',    'Electronics', 4.8),
+        ('Nike Air Max 90',   'Classic running shoes',              120.00, 'pair',  'airmax90.jpg',       0, TRUE, 'Nike',    'Footwear',    4.2),
+        ('Adidas Ultraboost', 'High performance running shoes',     180.00, 'pair',  'ultraboost.jpg',    15, TRUE, 'Adidas',  'Footwear',    4.6),
+        ('Apple Watch S9',    'Smartwatch with health tracking',    399.99, 'piece', 'applewatch9.jpg',    0, TRUE, 'Apple',   'Electronics', 4.4),
+        ('Samsung 4K TV',     '55-inch 4K QLED television',        799.99, 'piece', 'samsungtv.jpg',     20, TRUE, 'Samsung', 'Electronics', 4.1),
+        ('Nike Dri-FIT Tee',  'Moisture-wicking training t-shirt',  35.00, 'piece', 'drifit.jpg',         0, TRUE, 'Nike',    'Clothing',    4.0)
     RETURNING product_id, name
   ),
   ins_carts AS (

@@ -13,6 +13,7 @@ public sealed class ProductApiModel
     [JsonPropertyName("discount")]     public int     Discount    { get; set; }
     [JsonPropertyName("availability")] public bool    Availability { get; set; }
     [JsonPropertyName("brand")]        public string  Brand       { get; set; } = string.Empty;
+    [JsonPropertyName("category")]     public string  Category    { get; set; } = string.Empty;
     [JsonPropertyName("rating")]       public double  Rating      { get; set; }
     [JsonPropertyName("reviews")]      public List<ReviewApiModel> Reviews { get; set; } = [];
 }
