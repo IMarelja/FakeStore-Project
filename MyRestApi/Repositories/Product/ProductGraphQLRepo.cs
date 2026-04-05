@@ -40,6 +40,7 @@ public class ProductRepo : IProductRepo
                 available
                 brand
                 rating
+                category
                 reviews { reviewId userId rating comment }
               }
             }
@@ -65,6 +66,7 @@ public class ProductRepo : IProductRepo
                 available
                 brand
                 rating
+                category
                 reviews {
                     reviewId
                     userId
@@ -99,6 +101,7 @@ public class ProductRepo : IProductRepo
                 available
                 brand
                 rating
+                category
               }
             }
             """;
@@ -123,6 +126,7 @@ public class ProductRepo : IProductRepo
                 available
                 brand
                 rating
+                category
               }
             }
             """;

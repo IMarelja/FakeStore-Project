@@ -51,6 +51,7 @@ public class ProductService : IProductService
         availability = p.Available,
         brand        = p.Brand,
         rating       = p.Rating,
+        category     = p.Category,
         reviews      = p.Reviews.Select(r => new ReviewProductRead
         {
             user_id = r.UserId,

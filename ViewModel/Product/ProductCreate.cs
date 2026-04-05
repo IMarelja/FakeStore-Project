@@ -10,4 +10,5 @@ public class ProductCreate
     public int Discount { get; set; }
     public bool Available { get; set; }
     public string Brand { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
 }

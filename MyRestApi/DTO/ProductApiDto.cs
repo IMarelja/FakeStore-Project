@@ -14,5 +14,6 @@ public sealed class ProductApiDto
     [JsonPropertyName("availability")] public bool Availability { get; set; }
     [JsonPropertyName("brand")]        public string Brand { get; set; } = string.Empty;
     [JsonPropertyName("rating")]       public double Rating { get; set; }
+    [JsonPropertyName("category")]       public double Category { get; set; }
     [JsonPropertyName("reviews")]      public List<ReviewApiDto> Reviews { get; set; } = [];
 }

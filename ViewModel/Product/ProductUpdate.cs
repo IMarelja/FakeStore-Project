@@ -11,4 +11,5 @@ public class ProductUpdate
     public bool Available { get; set; }
     public string Brand { get; set; } = string.Empty;
     public double Rating { get; set; }
+    public string Category { get; set; } = string.Empty;
 }
