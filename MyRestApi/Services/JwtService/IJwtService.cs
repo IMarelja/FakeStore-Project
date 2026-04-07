@@ -1,5 +1,5 @@
 using FakeStore.ViewModel;
-using FakeStore.View;
+using FakeStore.Models;
 
 namespace MyRestApi.Services;
 

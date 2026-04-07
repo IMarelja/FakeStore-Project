@@ -1,4 +1,4 @@
-namespace FakeStore.View;
+namespace FakeStore.Models;
 
 public class Cart
 {

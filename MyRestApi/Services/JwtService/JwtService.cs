@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using FakeStore.View;
+using FakeStore.Models;
 using FakeStore.ViewModel;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

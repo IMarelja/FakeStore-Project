@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{6CF77410-E279-4466-A050-B68D7A190B78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApisView", "ApisView\ApisView.csproj", "{960747BB-8C38-487C-81B7-1A07F5340D3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{960747BB-8C38-487C-81B7-1A07F5340D3F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRestApi", "MyRestApi\MyRestApi.csproj", "{FB7FF31F-68E4-43CA-909D-CC7E0B52451A}"
 EndProject

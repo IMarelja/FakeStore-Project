@@ -1,4 +1,4 @@
-using FakeStore.View;
+using FakeStore.Models;
 using FakeStore.ViewModel;
 using MyRestApi.Repositories;
 

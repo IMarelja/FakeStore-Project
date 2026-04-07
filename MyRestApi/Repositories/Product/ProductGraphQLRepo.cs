@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Json;
-using FakeStore.View;
+using FakeStore.Models;
 using FakeStore.ViewModel;
 using MyRestApi.Middleware;
 

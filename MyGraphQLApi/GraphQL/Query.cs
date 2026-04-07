@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyGraphQLApi.Data;
-using FakeStore.View;
+using FakeStore.Models;
 
 namespace MyGraphQLApi.GraphQL;
 
