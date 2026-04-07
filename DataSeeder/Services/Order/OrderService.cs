@@ -2,9 +2,9 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using DataSeeder.Data;
-using DataSeeder.Models;
 using DataSeeder.Repositories;
-using FakeStore.View;
+using FakeStore.Models;
+using FakeStore.ViewModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -19,28 +19,28 @@ public class OrderService(IHttpClientFactory httpFactory, IOrderRepository repo,
         using var http = httpFactory.CreateClient();
         var baseUrl = config["Api:BaseUrl"]!;
 
-        var apiOrders = await http.GetFromJsonAsync<List<OrderApiModel>>($"{baseUrl}orders", _jsonOptions) ?? [];
+        var apiOrders = await http.GetFromJsonAsync<List<OrderRead>>($"{baseUrl}orders", _jsonOptions) ?? [];
 
         var validUserIds    = (await ctx.Users.Select(u => u.UserId).ToListAsync()).ToHashSet();
         var validProductIds = (await ctx.Products.Select(p => p.ProductId).ToListAsync()).ToHashSet();
 
         var orders = apiOrders
-            .Where(o => validUserIds.Contains(o.UserId))
+            .Where(o => validUserIds.Contains(o.user_id))
             .Select(o => new Order
             {
-                OrderId     = o.OrderId,
-                UserId      = o.UserId,
-                OrderStatus = o.Status,
-                TotalPrice  = o.TotalPrice
+                OrderId     = o.order_id,
+                UserId      = o.user_id,
+                OrderStatus = o.status,
+                TotalPrice  = (decimal)o.total_price
             });
 
-        var validOrderIds = apiOrders.Where(o => validUserIds.Contains(o.UserId)).Select(o => o.OrderId).ToHashSet();
+        var validOrderIds = apiOrders.Where(o => validUserIds.Contains(o.user_id)).Select(o => o.order_id).ToHashSet();
 
         var items = apiOrders
-            .Where(o => validOrderIds.Contains(o.OrderId))
-            .SelectMany(o => o.Items
-                .Where(i => validProductIds.Contains(i.ProductId))
-                .Select(i => (o.OrderId, new OrderItem { ProductId = i.ProductId, Quantity = i.Quantity })
+            .Where(o => validOrderIds.Contains(o.order_id))
+            .SelectMany(o => o.items
+                .Where(i => validProductIds.Contains(i.product_id))
+                .Select(i => (o.order_id, new OrderItem { ProductId = i.product_id, Quantity = i.quantity })
             ));
 
         await repo.SeedAsync(orders, items);

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FakeStore.View;
+using FakeStore.Models;
 
 namespace DataSeeder.Data;
 

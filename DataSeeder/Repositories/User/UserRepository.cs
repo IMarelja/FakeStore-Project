@@ -1,5 +1,5 @@
 using DataSeeder.Data;
-using FakeStore.View;
+using FakeStore.Models;
 
 namespace DataSeeder.Repositories;
 

@@ -1,9 +1,9 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using DataSeeder.Models;
 using DataSeeder.Repositories;
-using FakeStore.View;
+using FakeStore.Models;
+using FakeStore.ViewModel;
 using Microsoft.Extensions.Configuration;
 
 namespace DataSeeder.Services;
@@ -17,15 +17,15 @@ public class UserService(IHttpClientFactory httpFactory, IUserRepository repo, I
         using var http = httpFactory.CreateClient();
         var baseUrl = config["Api:BaseUrl"]!;
 
-        var apiUsers = await http.GetFromJsonAsync<List<UserApiModel>>($"{baseUrl}users", _jsonOptions) ?? [];
+        var apiUsers = await http.GetFromJsonAsync<List<UserRead>>($"{baseUrl}users", _jsonOptions) ?? [];
 
         var users = apiUsers.Select(u => new User
         {
-            UserId   = u.UserId,
-            Username = u.Username,
-            Email    = u.Email,
-            Password = u.Password,
-            Role     = string.IsNullOrWhiteSpace(u.Role) ? "read-only" : u.Role
+            UserId   = u.user_id,
+            Username = u.username,
+            Email    = u.email,
+            Password = u.password,
+            Role     = "read-only"
         });
 
         await repo.SeedAsync(users);
