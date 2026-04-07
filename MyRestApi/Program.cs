@@ -12,9 +12,11 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IProductRepo, ProductRepo>();
 builder.Services.AddScoped<IAuthenticationRepo, AuthenticationGraphQLRepo>();
+builder.Services.AddScoped<ICartRepo, CartGraphQLRepo>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<ICartService, CartService>();
 
 
 builder.Services.AddHttpContextAccessor();
