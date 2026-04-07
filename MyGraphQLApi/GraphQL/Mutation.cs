@@ -15,7 +15,7 @@ public class Mutation
             Username = input.Username,
             Email = input.Email,
             Password = input.Password,
-            Role = input.Role
+            Role = input.Role ?? "read-only"
         };
         db.Users.Add(user);
         await db.SaveChangesAsync();

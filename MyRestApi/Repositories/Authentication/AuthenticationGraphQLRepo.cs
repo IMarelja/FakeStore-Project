@@ -90,7 +90,15 @@ public class AuthenticationGraphQLRepo : IAuthenticationRepo
             }
             """;
 
-        var data = await SendAsync(mutation, new { input = new { req.username, req.email, req.password } });
+        var data = await SendAsync(mutation, new
+        {
+            input = new
+            {
+                req.username,
+                req.email,
+                req.password
+            }
+        });
         return JsonSerializer.Deserialize<User>(
             data.GetProperty("createUser").GetRawText(), _readOptions)!;
     }
