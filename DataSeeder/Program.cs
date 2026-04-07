@@ -6,6 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+
+// --------------------------------------------
+//      Is extra seeded sql file here?
+// --------------------------------------------
 var sqlPath = Path.Combine(AppContext.BaseDirectory, "seed-extra.sql");
 if (!File.Exists(sqlPath))
 {
@@ -13,6 +17,9 @@ if (!File.Exists(sqlPath))
     return;
 }
 
+// --------------------------------------
+//      Host connection setup
+// --------------------------------------
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(cfg =>
         cfg.AddJsonFile("appsettings.json", optional: false))
@@ -39,7 +46,46 @@ var host = Host.CreateDefaultBuilder(args)
 using var scope = host.Services.CreateScope();
 var sp  = scope.ServiceProvider;
 var ctx = sp.GetRequiredService<PostgresDbContext>();
+var cfg = sp.GetRequiredService<IConfiguration>();
 
+
+// --------------------------------------------
+//      API and Database connection check
+// --------------------------------------------
+Console.WriteLine("Checking database connection...");
+if (!await ctx.Database.CanConnectAsync())
+{
+    Console.Error.WriteLine("ERROR: Cannot connect to the database. Check your connection string.");
+    return;
+}
+Console.WriteLine("Database connection OK.");
+
+Console.WriteLine("Checking API connection...");
+var baseUrl = cfg["Api:BaseUrl"];
+using (var http = new HttpClient())
+{
+    try
+    {
+        var response = await http.GetAsync(baseUrl);
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.Error.WriteLine($"ERROR: API returned {(int)response.StatusCode} {response.ReasonPhrase}. Check the API URL.");
+            return;
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"ERROR: Cannot reach the API at {baseUrl}. {ex.Message}");
+        return;
+    }
+}
+Console.WriteLine("API connection OK.");
+
+
+
+// -----------------------------------------
+//      Actually inputing data
+// -----------------------------------------
 Console.WriteLine("Clearing existing data...");
 await ctx.Database.ExecuteSqlRawAsync(
     "TRUNCATE TABLE users, product RESTART IDENTITY CASCADE");
