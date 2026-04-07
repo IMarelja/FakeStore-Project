@@ -88,8 +88,8 @@ public class ProductRepo : IProductRepo
 
     public async Task<Product> CreateAsync(ProductCreate req)
     {
-        const string query = """
-            mutation($input: ProductInput!) {
+        const string mutation = """
+            mutation createProduct($input: ProductInput!) {
               createProduct(input: $input) {
                 productId
                 name
@@ -106,14 +106,29 @@ public class ProductRepo : IProductRepo
             }
             """;
 
-        var data = await SendAsync(query, new { input = req });
+        var data = await SendAsync(mutation, new
+        {
+            input = new
+            {
+                req.Name,
+                req.Description,
+                req.Price,
+                req.Unit,
+                req.Image,
+                req.Discount,
+                req.Available,
+                req.Brand,
+                req.Category,
+                Rating = 0.0
+            }
+        });
         return JsonSerializer.Deserialize<Product>(
             data.GetProperty("createProduct").GetRawText(), _readOptions)!;
     }
 
     public async Task<Product?> UpdateAsync(int id, ProductUpdate req)
     {
-        const string query = """
+        const string mutation = """
             mutation($id: Int!, $input: ProductInput!) {
               updateProduct(id: $id, input: $input) {
                 productId
@@ -131,13 +146,25 @@ public class ProductRepo : IProductRepo
             }
             """;
 
-        var data = await SendAsync(query, new { id, input = req });
-        var updatedEl = data.GetProperty("updateProduct");
-
-        if (updatedEl.ValueKind == JsonValueKind.Null)
-            return null;
-
-        return JsonSerializer.Deserialize<Product>(updatedEl.GetRawText(), _readOptions)!;
+        var data = await SendAsync(mutation, new
+        {
+            input = new
+            {
+                req.Id,
+                req.Name,
+                req.Description,
+                req.Price,
+                req.Unit,
+                req.Image,
+                req.Discount,
+                req.Available,
+                req.Brand,
+                req.Category,
+                Rating = 0.0
+            }
+        });
+        return JsonSerializer.Deserialize<Product>(
+            data.GetProperty("updateProduct").GetRawText(), _readOptions)!;
     }
 
     public async Task<bool> DeleteAsync(int id)
