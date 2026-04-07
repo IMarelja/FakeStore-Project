@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MyRestApi.Model;
 using MyRestApi.Repositories;
 using MyRestApi.Services;
@@ -14,11 +15,13 @@ builder.Services.AddScoped<IProductRepo, ProductRepo>();
 builder.Services.AddScoped<IAuthenticationRepo, AuthenticationGraphQLRepo>();
 builder.Services.AddScoped<ICartRepo, CartGraphQLRepo>();
 builder.Services.AddScoped<IOrderRepo, OrderGraphQLRepo>();
+builder.Services.AddScoped<IUserRepo, UserGraphQLRepo>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 
 builder.Services.AddHttpContextAccessor();
