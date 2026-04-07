@@ -1,14 +1,21 @@
+using System.Text.Json.Serialization;
+
 namespace FakeStore.ViewModel;
 
 public class OrderRead
 {
-    public int OrderId { get; set; }
+    [JsonPropertyName("order_id")]
+    public int order_id { get; set; }
 
-    public int UserId { get; set; }
+    [JsonPropertyName("user_id")]
+    public int user_id { get; set; }
 
-    public string Status { get; set; } = string.Empty;
+    [JsonPropertyName("status")]
+    public string status { get; set; } = string.Empty;
 
-    public double TotalPrice { get; set; }
+    [JsonPropertyName("total_price")]
+    public double total_price { get; set; }
 
-    public List<ItemCartRead> Items { get; set; } = [];
+    [JsonPropertyName("items")]
+    public List<ItemOrderRead> items { get; set; } = [];
 }

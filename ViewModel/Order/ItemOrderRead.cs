@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace FakeStore.ViewModel;
 
-public class ItemCartRead
+public class ItemOrderRead
 {
     [JsonPropertyName("product_id")]
     public int product_id { get; set; }
