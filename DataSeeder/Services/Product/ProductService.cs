@@ -1,10 +1,12 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using DataSeeder.Data;
 using DataSeeder.Repositories;
 using FakeStore.Models;
 using FakeStore.ViewModel;
+using Json.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -19,7 +21,22 @@ public class ProductService(IHttpClientFactory httpFactory, IProductRepository r
         using var http = httpFactory.CreateClient();
         var baseUrl = config["Api:BaseUrl"]!;
 
-        var apiProducts = await http.GetFromJsonAsync<List<ProductRead>>($"{baseUrl}products", _jsonOptions) ?? [];
+        var raw = await http.GetStringAsync($"{baseUrl}products");
+
+        var schemaPath = Path.Combine(AppContext.BaseDirectory, "JsonSchemas", "Product.json");
+        var schema = JsonSchema.FromText(await File.ReadAllTextAsync(schemaPath));
+        var result = schema.Evaluate(JsonNode.Parse(raw), new EvaluationOptions { OutputFormat = OutputFormat.List });
+
+        if (!result.IsValid)
+        {
+            var errors = result.Details
+                .Where(d => !d.IsValid && d.Errors is not null)
+                .SelectMany(d => d.Errors!.Select(e => $"  {d.InstanceLocation}: {e.Value}"));
+
+            throw new InvalidDataException($"Product API response failed schema validation:\n{string.Join("\n", errors)}");
+        }
+
+        var apiProducts = JsonSerializer.Deserialize<List<ProductRead>>(raw, _jsonOptions) ?? [];
 
         var products = apiProducts.Select(p => new Product
         {

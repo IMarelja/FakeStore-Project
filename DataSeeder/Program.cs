@@ -83,9 +83,9 @@ Console.WriteLine("API connection OK.");
 
 
 
-// -----------------------------------------
-//      Actually inputing data
-// -----------------------------------------
+// ----------------------------------------------------
+//    Checking the JSON Schema and inputing data
+// -----------------------------------------------------
 Console.WriteLine("Clearing existing data...");
 await ctx.Database.ExecuteSqlRawAsync(
     "TRUNCATE TABLE users, product RESTART IDENTITY CASCADE");

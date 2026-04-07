@@ -1,10 +1,12 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using DataSeeder.Data;
 using DataSeeder.Repositories;
 using FakeStore.Models;
 using FakeStore.ViewModel;
+using Json.Schema;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -19,7 +21,22 @@ public class OrderService(IHttpClientFactory httpFactory, IOrderRepository repo,
         using var http = httpFactory.CreateClient();
         var baseUrl = config["Api:BaseUrl"]!;
 
-        var apiOrders = await http.GetFromJsonAsync<List<OrderRead>>($"{baseUrl}orders", _jsonOptions) ?? [];
+        var raw = await http.GetStringAsync($"{baseUrl}orders");
+
+        var schemaPath = Path.Combine(AppContext.BaseDirectory, "JsonSchemas", "Order.json");
+        var schema = JsonSchema.FromText(await File.ReadAllTextAsync(schemaPath));
+        var result = schema.Evaluate(JsonNode.Parse(raw), new EvaluationOptions { OutputFormat = OutputFormat.List });
+
+        if (!result.IsValid)
+        {
+            var errors = result.Details
+                .Where(d => !d.IsValid && d.Errors is not null)
+                .SelectMany(d => d.Errors!.Select(e => $"  {d.InstanceLocation}: {e.Value}"));
+
+            throw new InvalidDataException($"Order API response failed schema validation:\n{string.Join("\n", errors)}");
+        }
+
+        var apiOrders = JsonSerializer.Deserialize<List<OrderRead>>(raw, _jsonOptions) ?? [];
 
         var validUserIds    = (await ctx.Users.Select(u => u.UserId).ToListAsync()).ToHashSet();
         var validProductIds = (await ctx.Products.Select(p => p.ProductId).ToListAsync()).ToHashSet();
