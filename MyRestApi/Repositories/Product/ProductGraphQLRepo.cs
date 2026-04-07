@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using FakeStore.Models;
 using FakeStore.ViewModel;
+using MyRestApi.DTO;
 using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
@@ -177,6 +178,37 @@ public class ProductRepo : IProductRepo
 
         var data = await SendAsync(query, new { id });
         return data.GetProperty("deleteProduct").GetBoolean();
+    }
+
+    public async Task<Review?> AddReviewAsync(ReviewApiDto dto)
+    {
+        const string mutation = """
+            mutation($input: ReviewInput!) {
+              createReview(input: $input) {
+                reviewId
+                productId
+                userId
+                rating
+                comment
+              }
+            }
+            """;
+
+        var data = await SendAsync(mutation, new
+        {
+            input = new
+            {
+                UserId    = dto.UserId,
+                ProductId = dto.ProductId,
+                Rating    = dto.Rating,
+                Comment   = dto.Comment
+            }
+        });
+
+        var el = data.GetProperty("createReview");
+        return el.ValueKind == JsonValueKind.Null
+            ? null
+            : JsonSerializer.Deserialize<Review>(el.GetRawText(), _readOptions);
     }
 
     private async Task<JsonElement> SendAsync(string query, object? variables = null)

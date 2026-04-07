@@ -1,5 +1,6 @@
 using FakeStore.Models;
 using FakeStore.ViewModel;
+using MyRestApi.DTO;
 using MyRestApi.Repositories;
 
 namespace MyRestApi.Services;
@@ -38,6 +39,18 @@ public class ProductService : IProductService
     }
 
     public Task<bool> DeleteAsync(int id) => _repo.DeleteAsync(id);
+
+    public async Task<ReviewProductRead?> AddReviewAsync(ReviewApiDto dto)
+    {
+        var review = await _repo.AddReviewAsync(dto);
+        if (review is null) return null;
+        return new ReviewProductRead
+        {
+            user_id = review.UserId,
+            rating  = review.Rating,
+            comment = review.Comment
+        };
+    }
 
     private static ProductRead ToViewModel(Product p) => new()
     {

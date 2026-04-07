@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FakeStore.ViewModel;
+using MyRestApi.DTO;
 using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
@@ -51,5 +52,29 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         return await _service.DeleteAsync(id) ? NoContent() : NotFound();
+    }
+
+    // POST /api/product/{id}/review
+    [HttpPost("{id}/review")]
+    public async Task<ActionResult<ReviewProductRead>> AddReview(int id, [FromBody] ReviewProductCreate req)
+    {
+        var userId = 1;
+
+        var reviewDto = reviewViewToReviewDTO(id, userId, req);
+
+
+        var review = await _service.AddReviewAsync(reviewDto);
+        return review is null ? NotFound() : CreatedAtAction(nameof(GetById), new { id }, review);
+    }
+
+    private ReviewApiDto reviewViewToReviewDTO(int productId, int userId, ReviewProductCreate view)
+    {
+        return new ReviewApiDto
+        {
+            ProductId = productId,
+            UserId = userId,
+            Comment = view.Comment,
+            Rating = view.Rating
+        };
     }
 }
