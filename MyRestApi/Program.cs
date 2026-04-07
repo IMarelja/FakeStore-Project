@@ -17,6 +17,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IClaimsService, ClaimsService>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddSingleton<IJwtService, JwtService>();
 
