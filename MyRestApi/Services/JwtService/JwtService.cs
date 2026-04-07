@@ -31,7 +31,8 @@ public class JwtService : IJwtService
             [
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             ],
             expires: expiry,
             signingCredentials: creds

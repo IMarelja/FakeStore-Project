@@ -22,7 +22,35 @@ builder.Services.AddSingleton<IJwtService, JwtService>();
 
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var scheme = new OpenApiSecurityScheme
+    {
+        Name         = "Authorization",
+        Type         = SecuritySchemeType.Http,
+        Scheme       = "bearer",
+        BearerFormat = "JWT",
+        In           = ParameterLocation.Header,
+        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+    };
+
+    options.AddSecurityDefinition("Bearer", scheme);
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
+            },
+            []
+        }
+    });
+});
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<MyRestApi.Middleware.MyRestApiExceptionHandler>();
 
