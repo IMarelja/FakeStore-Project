@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "cart_id": { 
+        "type": "integer", 
+        "minimum": 1 
+      },
+      "user_id": { 
+        "type": "integer", 
+        "minimum": 1 
+      },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "product_id": { 
+              "type": "integer", 
+              "minimum": 1 
+            },
+            "quantity": { 
+              "type": "integer", 
+              "minimum": 1 
+            }
+          },
+          "required": [
+            "product_id", 
+            "quantity"
+          ]
+        }
+      }
+    },
+    "required": [
+      "cart_id", 
+      "user_id", 
+      "items"
+    ]
+  }
+}
