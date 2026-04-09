@@ -30,24 +30,20 @@ public class OrdersController : ControllerBase
         return order is null ? NotFound() : Ok(ToStatusModel(order));
     }
 
-    // POST /api/orders/
-    [HttpPost]
+    // PUT /api/orders/ (⚠️ PUT MUST CREATE ORDERS, I KNOW IT IS BAD, BUT IT MUST)
+    [HttpPut]
     public async Task<ActionResult<OrderCreateResponse>> AddOrder([FromBody] OrderCreate req)
     {
         var created = await _service.CreateAsync(req);
-        return CreatedAtAction(nameof(GetById), new { created.order_id }, created);
+        return CreatedAtAction(nameof(GetById), new { created.order_id }, ToCreateResponceModel(created, "Order successfully placed."));
     }
 
-    // PUT /api/orders/{id}
-    [HttpPut("{id}")]
+    // POST /api/orders/{id} (⚠️ POST MUST UPDATE ORDERS, I KNOW IT IS BAD, BUT IT MUST)
+    [HttpPost("{id}")]
     public async Task<ActionResult<OrderCreateResponse>> EditOrder(int id, [FromBody] OrderUpdate req)
     {
         var updated = await _service.UpdateAsync(id, req);
-
-        if(updated is null)
-            NotFound();
-
-        return updated is null ? NotFound() : Ok(updated);
+        return updated is null ? NotFound() : Ok(ToCreateResponceModel(updated, "Order successfully updated."));
     }
 
     // DELETE /api/orders/{id}
@@ -62,14 +58,13 @@ public class OrdersController : ControllerBase
         order_id    = o.order_id,
         user_id     = o.user_id,
         status      = o.status,
-        total_price = o.total_price,
-        items       = o.items
+        total_price = o.total_price
     };
 
-    private static OrderCreateResponse ToCreateResponceModel(OrderRead o) => new()
+    private static OrderCreateResponse ToCreateResponceModel(OrderRead o, string message) => new()
     {
         OrderId     = o.order_id,
         Status      = o.status,
-        Message     = "Order successfuly something"
+        Message     = message
     };
 }

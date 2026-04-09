@@ -207,13 +207,27 @@ public class Mutation
         return order;
     }
 
-    public async Task<Order?> UpdateOrder(int id, OrderInput input, [Service] FakeStoreDbContext db)
+    public async Task<Order?> UpdateOrder(int id, OrderUpdateInput input, [Service] FakeStoreDbContext db)
     {
         var order = await db.Orders.FindAsync(id);
-        if (order is null) return null;
-        order.UserId = input.UserId;
-        order.OrderStatus = input.OrderStatus;
-        order.TotalPrice = input.TotalPrice;
+        if (order is null) 
+            return null;
+
+        if (input.UserId.HasValue)
+        {
+            order.UserId = input.UserId.Value;
+        }    
+            
+        if (input.OrderStatus is not null)
+        {
+            order.OrderStatus = input.OrderStatus;
+        }
+            
+        if (input.TotalPrice.HasValue)
+        {
+            order.TotalPrice = input.TotalPrice.Value;
+        }
+            
         await db.SaveChangesAsync();
         return order;
     }

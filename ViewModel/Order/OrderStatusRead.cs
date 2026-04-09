@@ -15,7 +15,4 @@ public class OrderStatusRead
 
     [JsonPropertyName("total_price")]
     public double total_price { get; set; }
-
-    [JsonPropertyName("items")]
-    public List<ItemOrderRead> items { get; set; } = [];
 }
