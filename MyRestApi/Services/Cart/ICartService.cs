@@ -10,5 +10,6 @@ public interface ICartService
     Task<CartRead?> AddItemAsync(int cartId, CartItemAdd req);
     Task<CartRead?> EditItemAsync(int itemId, CartItemEdit req);
     Task<bool> RemoveItemAsync(int itemId);
+    Task<bool> RemoveItemByUserAndProductAsync(int userId, int productId);
     Task<bool> DeleteCartAsync(int cartId);
 }

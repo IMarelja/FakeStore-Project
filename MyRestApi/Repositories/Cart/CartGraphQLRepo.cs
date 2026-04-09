@@ -166,6 +166,17 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
         return data.GetProperty("deleteCartItem").GetBoolean();
     }
 
+    public async Task<bool> RemoveItemByUserAndProductAsync(int userId, int productId)
+    {
+        var cart = await GetByUserIdAsync(userId);
+        if (cart is null) return false;
+
+        var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+        if (item is null) return false;
+
+        return await RemoveItemAsync(item.CartItemId);
+    }
+
     public async Task<bool> DeleteCartAsync(int cartId)
     {
         const string mutation = """

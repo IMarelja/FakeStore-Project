@@ -39,6 +39,9 @@ public class CartService(ICartRepo repo) : ICartService
     public Task<bool> RemoveItemAsync(int itemId) =>
         repo.RemoveItemAsync(itemId);
 
+    public Task<bool> RemoveItemByUserAndProductAsync(int userId, int productId) =>
+        repo.RemoveItemByUserAndProductAsync(userId, productId);
+
     public Task<bool> DeleteCartAsync(int cartId) =>
         repo.DeleteCartAsync(cartId);
 

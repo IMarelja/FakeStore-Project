@@ -63,9 +63,10 @@ public class CartController : ControllerBase
 
     // DELETE /api/cart/me/item
     [HttpDelete("me/item")]
-    public async Task<IActionResult> DeleteItemToOwnCart([FromQuery] int item_id)
+    public async Task<IActionResult> DeleteItemToOwnCart([FromQuery] int product_id)
     {
-        return await _service.RemoveItemAsync(item_id) ? NoContent() : NotFound();
+        return await _service.RemoveItemByUserAndProductAsync(_claims.GetUserId(), product_id)
+            ? NoContent() : NotFound();
     }
 
     // POST /api/cart/{id}/item
@@ -86,9 +87,10 @@ public class CartController : ControllerBase
 
     // DELETE /api/cart/{id}/item
     [HttpDelete("{id:int}/item")]
-    public async Task<IActionResult> DeleteItemToCart(int id, [FromQuery] int item_id)
+    public async Task<IActionResult> DeleteItemToCart(int id, [FromQuery] int product_id)
     {
-        return await _service.RemoveItemAsync(item_id) ? NoContent() : NotFound();
+        return await _service.RemoveItemByUserAndProductAsync(_claims.GetUserId(), product_id)
+            ? NoContent() : NotFound();
     }
 
     // DELETE /api/cart
