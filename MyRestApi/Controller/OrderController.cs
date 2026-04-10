@@ -1,6 +1,6 @@
-using FakeStore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyRestApi.DTO.Order;
 using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
@@ -19,35 +19,37 @@ public class OrdersController : ControllerBase
 
     // GET /api/orders
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OrderRead>>> GetAll()
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<IEnumerable<OrderReadDto>>> GetAll()
     {
         return Ok(await _service.GetAllAsync());
     }
 
     // GET /api/orders/status?order_id={order_id}
     [HttpGet("status")]
-    public async Task<ActionResult<OrderStatusRead>> GetById([FromQuery] int order_id)
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<OrderStatusReadDto>> GetById([FromQuery] int order_id)
     {
         var order = await _service.GetByIdAsync(order_id);
-        return order is null ? NotFound() : Ok(ToStatusModel(order));
+        return order is null ? NotFound() : Ok(ToStatusDto(order));
     }
 
     // PUT /api/orders/ (⚠️ PUT MUST CREATE ORDERS, I KNOW IT IS BAD, BUT IT MUST)
     [HttpPut]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<OrderCreateResponse>> AddOrder([FromBody] OrderCreate req)
+    public async Task<ActionResult<OrderCreateResponseDto>> AddOrder([FromBody] OrderCreateDto req)
     {
         var created = await _service.CreateAsync(req);
-        return CreatedAtAction(nameof(GetById), new { created.order_id }, ToCreateResponceModel(created, "Order successfully placed."));
+        return CreatedAtAction(nameof(GetById), new { created.order_id }, ToCreateResponseDto(created, "Order successfully placed."));
     }
 
     // POST /api/orders/{id} (⚠️ POST MUST UPDATE ORDERS, I KNOW IT IS BAD, BUT IT MUST)
     [HttpPost("{id}")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<OrderCreateResponse>> EditOrder(int id, [FromBody] OrderUpdate req)
+    public async Task<ActionResult<OrderCreateResponseDto>> EditOrder(int id, [FromBody] OrderUpdateDto req)
     {
         var updated = await _service.UpdateAsync(id, req);
-        return updated is null ? NotFound() : Ok(ToCreateResponceModel(updated, "Order successfully updated."));
+        return updated is null ? NotFound() : Ok(ToCreateResponseDto(updated, "Order successfully updated."));
     }
 
     // DELETE /api/orders/{id}
@@ -58,7 +60,7 @@ public class OrdersController : ControllerBase
         return await _service.DeleteAsync(id) ? NoContent() : NotFound();
     }
 
-    private static OrderStatusRead ToStatusModel(OrderRead o) => new()
+    private static OrderStatusReadDto ToStatusDto(OrderReadDto o) => new()
     {
         order_id    = o.order_id,
         user_id     = o.user_id,
@@ -66,10 +68,10 @@ public class OrdersController : ControllerBase
         total_price = o.total_price
     };
 
-    private static OrderCreateResponse ToCreateResponceModel(OrderRead o, string message) => new()
+    private static OrderCreateResponseDto ToCreateResponseDto(OrderReadDto o, string message) => new()
     {
-        OrderId     = o.order_id,
-        Status      = o.status,
-        Message     = message
+        OrderId = o.order_id,
+        Status  = o.status,
+        Message = message
     };
 }

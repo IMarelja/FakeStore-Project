@@ -1,6 +1,6 @@
-using FakeStore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyRestApi.DTO.User;
 using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
@@ -21,14 +21,16 @@ public class UserController : ControllerBase
 
     // GET /api/user
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserRead>>> GetAll()
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<IEnumerable<UserReadDto>>> GetAll()
     {
         return Ok(await _service.GetAllAsync());
     }
 
     // GET /api/user/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserRead>> GetById(int id)
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<UserReadDto>> GetById(int id)
     {
         var user = await _service.GetByIdAsync(id);
         return user is null ? NotFound() : Ok(user);
@@ -36,7 +38,8 @@ public class UserController : ControllerBase
 
     // GET /api/user/me
     [HttpGet("me/")]
-    public async Task<ActionResult<UserRead>> GetMe()
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<UserReadDto>> GetMe()
     {
         var user = await _service.GetByIdAsync(_claims.GetUserId());
         return user is null ? NotFound() : Ok(user);
@@ -45,7 +48,7 @@ public class UserController : ControllerBase
     // PUT /api/user/{id}
     [HttpPut("{id}")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<UserRead>> EditUser(int id, [FromBody] UserUpdate req)
+    public async Task<ActionResult<UserReadDto>> EditUser(int id, [FromBody] UserUpdateDto req)
     {
         var updated = await _service.UpdateAsync(id, req);
         return updated is null ? NotFound() : Ok(updated);
@@ -54,7 +57,7 @@ public class UserController : ControllerBase
     // PUT /api/user/me
     [HttpPut("me/")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<UserRead>> EditUserMe([FromBody] UserUpdate req)
+    public async Task<ActionResult<UserReadDto>> EditUserMe([FromBody] UserUpdateDto req)
     {
         var updated = await _service.UpdateAsync(_claims.GetUserId(), req);
         return updated is null ? NotFound() : Ok(updated);

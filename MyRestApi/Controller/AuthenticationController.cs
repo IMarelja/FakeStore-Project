@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Auth;
 using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
@@ -17,14 +17,14 @@ public class AuthenticationController : ControllerBase
 
     // POST /api/authentication/login
     [HttpPost("login")]
-    public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginRequest req)
+    public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginRequestDto req)
     {
         return Ok(await _service.LoginAsync(req));
     }
 
     // POST /api/authentication/register
     [HttpPost("register")]
-    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] RegisterRequest req)
+    public async Task<ActionResult<AuthResponseDto>> Register([FromBody] RegisterRequestDto req)
     {
         var result = await _service.RegisterAsync(req);
         return CreatedAtAction(nameof(Login), result);

@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Order;
 using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
@@ -60,7 +60,7 @@ public class OrderGraphQLRepo(IHttpClientFactory factory) : IOrderRepo
             : JsonSerializer.Deserialize<Order>(el.GetRawText(), _readOptions);
     }
 
-    public async Task<Order> CreateAsync(OrderCreate req)
+    public async Task<Order> CreateAsync(OrderCreateDto req)
     {
         const string createOrderMutation = """
             mutation($input: OrderInput!) {
@@ -93,7 +93,7 @@ public class OrderGraphQLRepo(IHttpClientFactory factory) : IOrderRepo
         return (await GetByIdAsync(order.OrderId))!;
     }
 
-    public async Task<Order?> UpdateAsync(int orderId, OrderUpdate req)
+    public async Task<Order?> UpdateAsync(int orderId, OrderUpdateDto req)
     {
         const string mutation = """
             mutation($id: Int!, $input: OrderUpdateInput!) {
@@ -146,17 +146,6 @@ public class OrderGraphQLRepo(IHttpClientFactory factory) : IOrderRepo
         {
             input = new { orderId, productId, quantity }
         });
-    }
-
-    private async Task DeleteOrderItemAsync(int orderId, int productId)
-    {
-        const string mutation = """
-            mutation($orderId: Int!, $productId: Int!) {
-              deleteOrderItem(orderId: $orderId, productId: $productId)
-            }
-            """;
-
-        await SendAsync(mutation, new { orderId, productId });
     }
 
     private async Task<JsonElement> SendAsync(string query, object? variables = null)

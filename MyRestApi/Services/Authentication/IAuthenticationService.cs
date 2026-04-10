@@ -1,9 +1,9 @@
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Auth;
 
 namespace MyRestApi.Services;
 
 public interface IAuthenticationService
 {
-    Task<AuthenticationResponse> LoginAsync(LoginRequest req);
-    Task<AuthenticationResponse> RegisterAsync(RegisterRequest req);
+    Task<AuthResponseDto> LoginAsync(LoginRequestDto req);
+    Task<AuthResponseDto> RegisterAsync(RegisterRequestDto req);
 }

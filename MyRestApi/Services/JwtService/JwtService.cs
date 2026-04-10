@@ -2,9 +2,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using FakeStore.Models;
-using FakeStore.ViewModel;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MyRestApi.DTO.Auth;
 using MyRestApi.Model;
 
 namespace MyRestApi.Services;
@@ -18,7 +18,7 @@ public class JwtService : IJwtService
         _settings = settings.Value;
     }
 
-    public AuthenticationResponse GenerateToken(User user, bool rememberMe)
+    public AuthResponseDto GenerateToken(User user, bool rememberMe)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Key));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -38,7 +38,7 @@ public class JwtService : IJwtService
             signingCredentials: creds
         );
 
-        return new AuthenticationResponse
+        return new AuthResponseDto
         {
             token = new JwtSecurityTokenHandler().WriteToken(token),
         };

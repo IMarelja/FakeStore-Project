@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Cart;
 using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
@@ -94,7 +94,7 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
             data.GetProperty("createCart").GetRawText(), _readOptions);
     }
 
-    public async Task<Cart?> AddItemAsync(int cartId, CartItemAdd req)
+    public async Task<Cart?> AddItemAsync(int cartId, CartItemAddDto req)
     {
         const string mutation = """
             mutation($input: CartItemInput!) {
@@ -124,7 +124,7 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
         return await GetByIdAsync(cartId);
     }
 
-    public async Task<Cart?> EditItemAsync(int itemId, CartItemEdit req)
+    public async Task<Cart?> EditItemAsync(int itemId, CartItemEditDto req)
     {
         const string mutation = """
             mutation($input: CartItemUpdateInput!) {

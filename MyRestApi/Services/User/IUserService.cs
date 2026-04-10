@@ -1,11 +1,11 @@
-using FakeStore.ViewModel;
+using MyRestApi.DTO.User;
 
 namespace MyRestApi.Services;
 
 public interface IUserService
 {
-    Task<List<UserRead>> GetAllAsync();
-    Task<UserRead?> GetByIdAsync(int userId);
-    Task<UserRead?> UpdateAsync(int userId, UserUpdate req);
+    Task<List<UserReadDto>> GetAllAsync();
+    Task<UserReadDto?> GetByIdAsync(int userId);
+    Task<UserReadDto?> UpdateAsync(int userId, UserUpdateDto req);
     Task<bool> DeleteAsync(int userId);
 }

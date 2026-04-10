@@ -1,5 +1,5 @@
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.User;
 
 namespace MyRestApi.Repositories;
 
@@ -7,6 +7,6 @@ public interface IUserRepo
 {
     Task<List<User>> GetAllAsync();
     Task<User?> GetByIdAsync(int userId);
-    Task<User?> UpdateAsync(int userId, UserUpdate req);
+    Task<User?> UpdateAsync(int userId, UserUpdateDto req);
     Task<bool> DeleteAsync(int userId);
 }

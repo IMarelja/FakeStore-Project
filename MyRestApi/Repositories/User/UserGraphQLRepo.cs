@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.User;
 using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
@@ -24,6 +24,7 @@ public class UserGraphQLRepo : IUserRepo
     {
         _http = factory.CreateClient("graphql");
     }
+
     public async Task<List<User>> GetAllAsync()
     {
         const string query = """
@@ -43,7 +44,8 @@ public class UserGraphQLRepo : IUserRepo
             data.GetProperty("users").GetRawText(), _readOptions)!;
     }
 
-    public async Task<User?> GetByIdAsync(int userId) {
+    public async Task<User?> GetByIdAsync(int userId)
+    {
         const string query = """
             query($id: Int!) {
               user(id: $id) {
@@ -65,7 +67,8 @@ public class UserGraphQLRepo : IUserRepo
         return JsonSerializer.Deserialize<User>(userEl.GetRawText(), _readOptions)!;
     }
 
-    public async Task<User?> UpdateAsync(int userId, UserUpdate req) {
+    public async Task<User?> UpdateAsync(int userId, UserUpdateDto req)
+    {
         const string mutation = """
             mutation($id: Int!, $input: UserInput!) {
               updateUser(id: $id, input: $input) {
@@ -92,7 +95,8 @@ public class UserGraphQLRepo : IUserRepo
             data.GetProperty("updateUser").GetRawText(), _readOptions)!;
     }
 
-    public async Task<bool> DeleteAsync(int userId) {
+    public async Task<bool> DeleteAsync(int userId)
+    {
         const string query = """
             mutation($id: Int!) {
               deleteUser(id: $id)

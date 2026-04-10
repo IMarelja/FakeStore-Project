@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Auth;
 using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
@@ -79,7 +79,7 @@ public class AuthenticationGraphQLRepo : IAuthenticationRepo
         return user is not null;
     }
 
-    public async Task<User> CreateUserAsync(RegisterRequest req)
+    public async Task<User> CreateUserAsync(RegisterRequestDto req)
     {
         const string mutation = """
             mutation($input: UserInput!) {

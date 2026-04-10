@@ -1,5 +1,5 @@
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Auth;
 
 namespace MyRestApi.Repositories;
 
@@ -9,5 +9,5 @@ public interface IAuthenticationRepo
     Task<User?> UserByUsernameAsync(string username);
     Task<bool> UsernameExistsAsync(string username);
     Task<bool> EmailExistsAsync(string email);
-    Task<User> CreateUserAsync(RegisterRequest req);
+    Task<User> CreateUserAsync(RegisterRequestDto req);
 }

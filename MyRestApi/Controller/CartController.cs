@@ -1,6 +1,6 @@
-using FakeStore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MyRestApi.DTO.Cart;
 using MyRestApi.Services;
 
 namespace MyRestApi.Controller;
@@ -21,14 +21,16 @@ public class CartController : ControllerBase
 
     // GET /api/cart
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CartRead>>> GetAll()
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<IEnumerable<CartReadDto>>> GetAll()
     {
         return Ok(await _service.GetAllAsync());
     }
 
     // GET /api/cart/{id}
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<CartRead>> GetById(int id)
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<CartReadDto>> GetById(int id)
     {
         var cart = await _service.GetByIdAsync(id);
         return cart is null ? NotFound() : Ok(cart);
@@ -36,7 +38,8 @@ public class CartController : ControllerBase
 
     // GET /api/cart/me
     [HttpGet("me")]
-    public async Task<ActionResult<CartRead>> GetOwnCart()
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<CartReadDto>> GetOwnCart()
     {
         var cart = await _service.GetByUserIdAsync(_claims.GetUserId());
         return cart is null ? NotFound() : Ok(cart);
@@ -45,7 +48,7 @@ public class CartController : ControllerBase
     // POST /api/cart/me/item
     [HttpPost("me/item")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartRead>> AddItemToOwnCart([FromBody] CartItemAdd req)
+    public async Task<ActionResult<CartReadDto>> AddItemToOwnCart([FromBody] CartItemAddDto req)
     {
         var own = await _service.GetByUserIdAsync(_claims.GetUserId());
         if (own is null) return NotFound();
@@ -57,7 +60,7 @@ public class CartController : ControllerBase
     // PUT /api/cart/me/{id}/item
     [HttpPut("me/{id:int}/item")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartRead>> EditItemToOwnCart(int id, [FromBody] CartItemEdit req)
+    public async Task<ActionResult<CartReadDto>> EditItemToOwnCart(int id, [FromBody] CartItemEditDto req)
     {
         var cart = await _service.EditItemAsync(id, req);
         return cart is null ? NotFound() : Ok(cart);
@@ -75,7 +78,7 @@ public class CartController : ControllerBase
     // POST /api/cart/{id}/item
     [HttpPost("{id:int}/item")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartRead>> AddItemToCart(int id, [FromBody] CartItemAdd req)
+    public async Task<ActionResult<CartReadDto>> AddItemToCart(int id, [FromBody] CartItemAddDto req)
     {
         var cart = await _service.AddItemAsync(id, req);
         return cart is null ? NotFound() : CreatedAtAction(nameof(GetById), new { id }, cart);
@@ -84,7 +87,7 @@ public class CartController : ControllerBase
     // PUT /api/cart/{id}/item
     [HttpPut("{id:int}/item")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartRead>> EditItemToCart(int id, [FromBody] CartItemEdit req)
+    public async Task<ActionResult<CartReadDto>> EditItemToCart(int id, [FromBody] CartItemEditDto req)
     {
         var cart = await _service.EditItemAsync(id, req);
         return cart is null ? NotFound() : Ok(cart);

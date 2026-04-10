@@ -1,5 +1,5 @@
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Order;
 using MyRestApi.Repositories;
 
 namespace MyRestApi.Services;
@@ -13,40 +13,40 @@ public class OrderService : IOrderService
         _repo = repo;
     }
 
-    public async Task<List<OrderRead>> GetAllAsync()
+    public async Task<List<OrderReadDto>> GetAllAsync()
     {
         var orders = await _repo.GetAllAsync();
-        return orders.Select(ToViewModel).ToList();
+        return orders.Select(ToDto).ToList();
     }
 
-    public async Task<OrderRead?> GetByIdAsync(int orderId)
+    public async Task<OrderReadDto?> GetByIdAsync(int orderId)
     {
         var order = await _repo.GetByIdAsync(orderId);
-        return order is null ? null : ToViewModel(order);
+        return order is null ? null : ToDto(order);
     }
 
-    public async Task<OrderRead> CreateAsync(OrderCreate req)
+    public async Task<OrderReadDto> CreateAsync(OrderCreateDto req)
     {
         var order = await _repo.CreateAsync(req);
-        return ToViewModel(order);
+        return ToDto(order);
     }
 
-    public async Task<OrderRead?> UpdateAsync(int orderId, OrderUpdate req)
+    public async Task<OrderReadDto?> UpdateAsync(int orderId, OrderUpdateDto req)
     {
         var order = await _repo.UpdateAsync(orderId, req);
-        return order is null ? null : ToViewModel(order);
+        return order is null ? null : ToDto(order);
     }
 
     public Task<bool> DeleteAsync(int orderId) =>
         _repo.DeleteAsync(orderId);
 
-    private static OrderRead ToViewModel(Order o) => new()
+    private static OrderReadDto ToDto(Order o) => new()
     {
         order_id    = o.OrderId,
         user_id     = o.UserId,
         status      = o.OrderStatus,
         total_price = (double)o.TotalPrice,
-        items       = o.Items.Select(i => new ItemOrderRead
+        items       = o.Items.Select(i => new OrderItemReadDto
         {
             product_id = i.ProductId,
             quantity   = i.Quantity

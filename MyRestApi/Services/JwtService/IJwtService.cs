@@ -1,9 +1,9 @@
-using FakeStore.ViewModel;
 using FakeStore.Models;
+using MyRestApi.DTO.Auth;
 
 namespace MyRestApi.Services;
 
 public interface IJwtService
 {
-    AuthenticationResponse GenerateToken(User user, bool rememberMe);
+    AuthResponseDto GenerateToken(User user, bool rememberMe);
 }

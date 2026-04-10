@@ -1,5 +1,5 @@
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Order;
 
 namespace MyRestApi.Repositories;
 
@@ -7,7 +7,7 @@ public interface IOrderRepo
 {
     Task<List<Order>> GetAllAsync();
     Task<Order?> GetByIdAsync(int orderId);
-    Task<Order> CreateAsync(OrderCreate req);
-    Task<Order?> UpdateAsync(int orderId, OrderUpdate req);
+    Task<Order> CreateAsync(OrderCreateDto req);
+    Task<Order?> UpdateAsync(int orderId, OrderUpdateDto req);
     Task<bool> DeleteAsync(int orderId);
 }

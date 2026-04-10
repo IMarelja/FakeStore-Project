@@ -1,4 +1,4 @@
-using FakeStore.ViewModel;
+using MyRestApi.DTO.Auth;
 using MyRestApi.Middleware;
 using MyRestApi.Repositories;
 
@@ -15,7 +15,7 @@ public class AuthenticationService : IAuthenticationService
         _jwtService = jwtService;
     }
 
-    public async Task<AuthenticationResponse> LoginAsync(LoginRequest loginRequest)
+    public async Task<AuthResponseDto> LoginAsync(LoginRequestDto loginRequest)
     {
         var user = await _repo.UserByUsernameAsync(loginRequest.username)
             ?? throw new UnauthorizedException("Invalid username or password.");
@@ -26,7 +26,7 @@ public class AuthenticationService : IAuthenticationService
         return _jwtService.GenerateToken(user, loginRequest.remember_me);
     }
 
-    public async Task<AuthenticationResponse> RegisterAsync(RegisterRequest registerRequest)
+    public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto registerRequest)
     {
         if (await _repo.EmailExistsAsync(registerRequest.email))
             throw new ConflictException($"'{registerRequest.email}' is already taken.");

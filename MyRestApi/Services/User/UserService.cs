@@ -1,5 +1,5 @@
 using FakeStore.Models;
-using FakeStore.ViewModel;
+using MyRestApi.DTO.User;
 using MyRestApi.Repositories;
 
 namespace MyRestApi.Services;
@@ -13,28 +13,28 @@ public class UserService : IUserService
         _repo = repo;
     }
 
-    public async Task<List<UserRead>> GetAllAsync()
+    public async Task<List<UserReadDto>> GetAllAsync()
     {
         var users = await _repo.GetAllAsync();
-        return users.Select(ToViewModel).ToList();
+        return users.Select(ToDto).ToList();
     }
 
-    public async Task<UserRead?> GetByIdAsync(int userId)
+    public async Task<UserReadDto?> GetByIdAsync(int userId)
     {
         var user = await _repo.GetByIdAsync(userId);
-        return user is null ? null : ToViewModel(user);
+        return user is null ? null : ToDto(user);
     }
 
-    public async Task<UserRead?> UpdateAsync(int userId, UserUpdate req)
+    public async Task<UserReadDto?> UpdateAsync(int userId, UserUpdateDto req)
     {
         var user = await _repo.UpdateAsync(userId, req);
-        return user is null ? null : ToViewModel(user);
+        return user is null ? null : ToDto(user);
     }
 
     public Task<bool> DeleteAsync(int userId) =>
         _repo.DeleteAsync(userId);
 
-    private static UserRead ToViewModel(User u) => new()
+    private static UserReadDto ToDto(User u) => new()
     {
         user_id  = u.UserId,
         username = u.Username,

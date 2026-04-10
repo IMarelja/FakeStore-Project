@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.Json;
 using FakeStore.Models;
-using FakeStore.ViewModel;
 using MyRestApi.DTO;
+using MyRestApi.DTO.Product;
 using MyRestApi.Middleware;
 
 namespace MyRestApi.Repositories;
@@ -87,7 +87,7 @@ public class ProductRepo : IProductRepo
         return JsonSerializer.Deserialize<Product>(productEl.GetRawText(), _readOptions)!;
     }
 
-    public async Task<Product> CreateAsync(ProductCreate req)
+    public async Task<Product> CreateAsync(ProductCreateDto req)
     {
         const string mutation = """
             mutation createProduct($input: ProductInput!) {
@@ -127,7 +127,7 @@ public class ProductRepo : IProductRepo
             data.GetProperty("createProduct").GetRawText(), _readOptions)!;
     }
 
-    public async Task<Product?> UpdateAsync(int id, ProductUpdate req)
+    public async Task<Product?> UpdateAsync(int id, ProductUpdateDto req)
     {
         const string mutation = """
             mutation($id: Int!, $input: ProductInput!) {
@@ -151,7 +151,7 @@ public class ProductRepo : IProductRepo
         {
             input = new
             {
-                req.Id,
+                id,
                 req.Name,
                 req.Description,
                 req.Price,

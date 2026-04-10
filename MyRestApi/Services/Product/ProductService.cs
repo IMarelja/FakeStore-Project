@@ -1,6 +1,6 @@
 using FakeStore.Models;
-using FakeStore.ViewModel;
 using MyRestApi.DTO;
+using MyRestApi.DTO.Product;
 using MyRestApi.Repositories;
 
 namespace MyRestApi.Services;
@@ -14,37 +14,37 @@ public class ProductService : IProductService
         _repo = repo;
     }
 
-    public async Task<List<ProductRead>> GetAllAsync()
+    public async Task<List<ProductReadDto>> GetAllAsync()
     {
         var products = await _repo.GetAllAsync();
-        return products.Select(ToViewModel).ToList();
+        return products.Select(ToDto).ToList();
     }
 
-    public async Task<ProductRead?> GetByIdAsync(int id)
+    public async Task<ProductReadDto?> GetByIdAsync(int id)
     {
         var product = await _repo.GetByIdAsync(id);
-        return product is null ? null : ToViewModel(product);
+        return product is null ? null : ToDto(product);
     }
 
-    public async Task<ProductRead> CreateAsync(ProductCreate req)
+    public async Task<ProductReadDto> CreateAsync(ProductCreateDto req)
     {
         var product = await _repo.CreateAsync(req);
-        return ToViewModel(product);
+        return ToDto(product);
     }
 
-    public async Task<ProductRead?> UpdateAsync(int id, ProductUpdate req)
+    public async Task<ProductReadDto?> UpdateAsync(int id, ProductUpdateDto req)
     {
         var product = await _repo.UpdateAsync(id, req);
-        return product is null ? null : ToViewModel(product);
+        return product is null ? null : ToDto(product);
     }
 
     public Task<bool> DeleteAsync(int id) => _repo.DeleteAsync(id);
 
-    public async Task<ReviewProductRead?> AddReviewAsync(ReviewApiDto dto)
+    public async Task<ReviewProductReadDto?> AddReviewAsync(ReviewApiDto dto)
     {
         var review = await _repo.AddReviewAsync(dto);
         if (review is null) return null;
-        return new ReviewProductRead
+        return new ReviewProductReadDto
         {
             user_id = review.UserId,
             rating  = review.Rating,
@@ -52,7 +52,7 @@ public class ProductService : IProductService
         };
     }
 
-    private static ProductRead ToViewModel(Product p) => new()
+    private static ProductReadDto ToDto(Product p) => new()
     {
         product_id   = p.ProductId,
         name         = p.Name,
@@ -65,7 +65,7 @@ public class ProductService : IProductService
         brand        = p.Brand,
         rating       = p.Rating,
         category     = p.Category,
-        reviews      = p.Reviews.Select(r => new ReviewProductRead
+        reviews      = p.Reviews.Select(r => new ReviewProductReadDto
         {
             user_id = r.UserId,
             rating  = r.Rating,
