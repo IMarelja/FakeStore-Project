@@ -63,6 +63,52 @@ CREATE TABLE order_item (
 );
 
 -- ─────────────────────────────────────────────
+-- Constraints 
+-- ─────────────────────────────────────────────
+
+ALTER TABLE review
+  DROP CONSTRAINT review_user_id_fkey,
+  DROP CONSTRAINT review_product_id_fkey,
+  ADD CONSTRAINT review_user_id_fkey
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE,
+  ADD CONSTRAINT review_product_id_fkey
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    ON DELETE CASCADE;
+
+ALTER TABLE cart
+  DROP CONSTRAINT cart_user_id_fkey,
+  ADD CONSTRAINT cart_user_id_fkey
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE;
+
+ALTER TABLE cart_item
+  DROP CONSTRAINT cart_item_cart_id_fkey,
+  DROP CONSTRAINT cart_item_product_id_fkey,
+  ADD CONSTRAINT cart_item_cart_id_fkey
+    FOREIGN KEY (cart_id) REFERENCES cart(cart_id)
+    ON DELETE CASCADE,
+  ADD CONSTRAINT cart_item_product_id_fkey
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    ON DELETE CASCADE;
+
+ALTER TABLE orders
+  DROP CONSTRAINT orders_user_id_fkey,
+  ADD CONSTRAINT orders_user_id_fkey
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    ON DELETE CASCADE;
+
+ALTER TABLE order_item
+  DROP CONSTRAINT order_item_order_id_fkey,
+  DROP CONSTRAINT order_item_product_id_fkey,
+  ADD CONSTRAINT order_item_order_id_fkey
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+    ON DELETE CASCADE,
+  ADD CONSTRAINT order_item_product_id_fkey
+    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    ON DELETE CASCADE;
+
+-- ─────────────────────────────────────────────
 -- Indexes
 -- ─────────────────────────────────────────────
 
