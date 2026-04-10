@@ -10,5 +10,5 @@ public record ProductInput(
     bool Available,
     string Brand,
     string Category,
-    double Rating
+    double Rating = 0
 );

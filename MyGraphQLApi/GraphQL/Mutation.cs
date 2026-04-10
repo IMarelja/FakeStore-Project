@@ -58,7 +58,7 @@ public class Mutation
             Available = input.Available,
             Brand = input.Brand,
             Category = input.Category,
-            Rating = input.Rating
+            Rating = 0 // Always zero
         };
         db.Products.Add(product);
         await db.SaveChangesAsync();
@@ -68,7 +68,10 @@ public class Mutation
     public async Task<Product?> UpdateProduct(int id, ProductInput input, [Service] FakeStoreDbContext db)
     {
         var product = await db.Products.FindAsync(id);
-        if (product is null) return null;
+
+        if (product is null) 
+            return null;
+        
         product.Name = input.Name;
         product.Description = input.Description;
         product.Price = input.Price;
@@ -78,7 +81,10 @@ public class Mutation
         product.Available = input.Available;
         product.Brand = input.Brand;
         product.Category = input.Category;
-        product.Rating = input.Rating;
+
+        // Review must stay unchanged
+        product.Rating = product.Rating;
+
         await db.SaveChangesAsync();
         return product;
     }
@@ -105,28 +111,58 @@ public class Mutation
         };
         db.Reviews.Add(review);
         await db.SaveChangesAsync();
+
+        await RecalculateProductRatingAsync(review.ProductId, db);
+
         return review;
     }
 
     public async Task<Review?> UpdateReview(int id, ReviewInput input, [Service] FakeStoreDbContext db)
     {
         var review = await db.Reviews.FindAsync(id);
-        if (review is null) return null;
+        if (review is null) 
+            return null;
+
         review.UserId = input.UserId;
-        review.ProductId = input.ProductId;
         review.Rating = input.Rating;
         review.Comment = input.Comment;
+
+        // Products review must stay the same
+        review.ProductId = review.ProductId;
+
         await db.SaveChangesAsync();
+
+        await RecalculateProductRatingAsync(review.ProductId, db);
+
         return review;
     }
 
     public async Task<bool> DeleteReview(int id, [Service] FakeStoreDbContext db)
     {
         var review = await db.Reviews.FindAsync(id);
-        if (review is null) return false;
+        if (review is null) 
+            return false;
+
+        var productId = review.ProductId;
         db.Reviews.Remove(review);
         await db.SaveChangesAsync();
+
+        await RecalculateProductRatingAsync(productId, db);
+
         return true;
+    }
+
+    private static async Task RecalculateProductRatingAsync(int productId, FakeStoreDbContext db)
+    {
+        var product = await db.Products.FindAsync(productId);
+        if (product is null) return;
+
+        product.Rating = await db.Reviews
+                                 .Where(r => r.ProductId == productId)
+                                 .Select(r => (double?)r.Rating)
+                                 .AverageAsync() ?? 0;
+
+        await db.SaveChangesAsync();
     }
 
     // ── Cart ───────────────────────────────────────────────────────────────

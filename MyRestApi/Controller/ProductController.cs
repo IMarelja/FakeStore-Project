@@ -12,10 +12,12 @@ namespace MyRestApi.Controller;
 public class ProductController : ControllerBase
 {
     private readonly IProductService _service;
+    private readonly IClaimsService _claims;
 
-    public ProductController(IProductService service)
+    public ProductController(IProductService service, IClaimsService claims)
     {
         _service = service;
+        _claims = claims;
     }
 
     // GET /api/product
@@ -66,9 +68,11 @@ public class ProductController : ControllerBase
     [Authorize(Roles = "full access")]
     public async Task<ActionResult<ReviewProductReadDto>> AddReview(int id, [FromBody] ReviewProductCreateDto req)
     {
-        var userId = 1;
 
-        var reviewDto = ReviewToApiDto(id, userId, req);
+        if(req.Rating < 1 || req.Rating > 5)
+            return BadRequest("Rating can only be in range between 1 and 5");
+
+        var reviewDto = ReviewToApiDto(id, _claims.GetUserId(), req);
 
         var review = await _service.AddReviewAsync(reviewDto);
         return review is null ? NotFound() : CreatedAtAction(nameof(GetById), new { id }, review);
