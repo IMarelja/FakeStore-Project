@@ -44,6 +44,7 @@ public class UserController : ControllerBase
 
     // PUT /api/user/{id}
     [HttpPut("{id}")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<UserRead>> EditUser(int id, [FromBody] UserUpdate req)
     {
         var updated = await _service.UpdateAsync(id, req);
@@ -52,6 +53,7 @@ public class UserController : ControllerBase
 
     // PUT /api/user/me
     [HttpPut("me/")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<UserRead>> EditUserMe([FromBody] UserUpdate req)
     {
         var updated = await _service.UpdateAsync(_claims.GetUserId(), req);
@@ -60,6 +62,7 @@ public class UserController : ControllerBase
 
     // DELETE /api/user/{id}
     [HttpDelete("{id}")]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         return await _service.DeleteAsync(id) ? NoContent() : NotFound();
@@ -67,6 +70,7 @@ public class UserController : ControllerBase
 
     // DELETE /api/user/me
     [HttpDelete("me/")]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> DeleteUserMe()
     {
         return await _service.DeleteAsync(_claims.GetUserId()) ? NoContent() : NotFound();

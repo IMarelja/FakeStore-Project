@@ -1,4 +1,5 @@
 using FakeStore.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyRestApi.Services;
 
@@ -6,6 +7,7 @@ namespace MyRestApi.Controller;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _service;
@@ -32,6 +34,7 @@ public class OrdersController : ControllerBase
 
     // PUT /api/orders/ (⚠️ PUT MUST CREATE ORDERS, I KNOW IT IS BAD, BUT IT MUST)
     [HttpPut]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<OrderCreateResponse>> AddOrder([FromBody] OrderCreate req)
     {
         var created = await _service.CreateAsync(req);
@@ -40,6 +43,7 @@ public class OrdersController : ControllerBase
 
     // POST /api/orders/{id} (⚠️ POST MUST UPDATE ORDERS, I KNOW IT IS BAD, BUT IT MUST)
     [HttpPost("{id}")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<OrderCreateResponse>> EditOrder(int id, [FromBody] OrderUpdate req)
     {
         var updated = await _service.UpdateAsync(id, req);
@@ -48,6 +52,7 @@ public class OrdersController : ControllerBase
 
     // DELETE /api/orders/{id}
     [HttpDelete("{id}")]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> DeleteOrder(int id)
     {
         return await _service.DeleteAsync(id) ? NoContent() : NotFound();

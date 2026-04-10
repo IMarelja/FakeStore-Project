@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using FakeStore.ViewModel;
 using MyRestApi.DTO;
@@ -7,6 +8,7 @@ namespace MyRestApi.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ProductController : ControllerBase
 {
     private readonly IProductService _service;
@@ -33,6 +35,7 @@ public class ProductController : ControllerBase
 
     // POST /api/product
     [HttpPost]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<ProductRead>> Create([FromBody] ProductCreate req)
     {
         var created = await _service.CreateAsync(req);
@@ -41,6 +44,7 @@ public class ProductController : ControllerBase
 
     // PUT /api/product/{id}
     [HttpPut("{id}")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<ProductRead>> Update(int id, [FromBody] ProductUpdate req)
     {
         var updated = await _service.UpdateAsync(id, req);
@@ -49,6 +53,7 @@ public class ProductController : ControllerBase
 
     // DELETE /api/product/{id}
     [HttpDelete("{id}")]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> Delete(int id)
     {
         return await _service.DeleteAsync(id) ? NoContent() : NotFound();
@@ -56,6 +61,7 @@ public class ProductController : ControllerBase
 
     // POST /api/product/{id}/review
     [HttpPost("{id}/review")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<ReviewProductRead>> AddReview(int id, [FromBody] ReviewProductCreate req)
     {
         var userId = 1;

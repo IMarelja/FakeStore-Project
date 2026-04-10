@@ -44,6 +44,7 @@ public class CartController : ControllerBase
 
     // POST /api/cart/me/item
     [HttpPost("me/item")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<CartRead>> AddItemToOwnCart([FromBody] CartItemAdd req)
     {
         var own = await _service.GetByUserIdAsync(_claims.GetUserId());
@@ -55,6 +56,7 @@ public class CartController : ControllerBase
 
     // PUT /api/cart/me/{id}/item
     [HttpPut("me/{id:int}/item")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<CartRead>> EditItemToOwnCart(int id, [FromBody] CartItemEdit req)
     {
         var cart = await _service.EditItemAsync(id, req);
@@ -63,6 +65,7 @@ public class CartController : ControllerBase
 
     // DELETE /api/cart/me/item
     [HttpDelete("me/item")]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> DeleteItemToOwnCart([FromQuery] int product_id)
     {
         return await _service.RemoveItemByUserAndProductAsync(_claims.GetUserId(), product_id)
@@ -71,6 +74,7 @@ public class CartController : ControllerBase
 
     // POST /api/cart/{id}/item
     [HttpPost("{id:int}/item")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<CartRead>> AddItemToCart(int id, [FromBody] CartItemAdd req)
     {
         var cart = await _service.AddItemAsync(id, req);
@@ -79,6 +83,7 @@ public class CartController : ControllerBase
 
     // PUT /api/cart/{id}/item
     [HttpPut("{id:int}/item")]
+    [Authorize(Roles = "full access")]
     public async Task<ActionResult<CartRead>> EditItemToCart(int id, [FromBody] CartItemEdit req)
     {
         var cart = await _service.EditItemAsync(id, req);
@@ -87,6 +92,7 @@ public class CartController : ControllerBase
 
     // DELETE /api/cart/{id}/item
     [HttpDelete("{id:int}/item")]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> DeleteItemToCart(int id, [FromQuery] int product_id)
     {
         return await _service.RemoveItemByUserAndProductAsync(_claims.GetUserId(), product_id)
@@ -95,6 +101,7 @@ public class CartController : ControllerBase
 
     // DELETE /api/cart
     [HttpDelete]
+    [Authorize(Roles = "full access")]
     public async Task<IActionResult> DeleteCart()
     {
         var own = await _service.GetByUserIdAsync(_claims.GetUserId());
