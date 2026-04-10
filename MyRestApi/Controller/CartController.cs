@@ -75,6 +75,7 @@ public class CartController : ControllerBase
             ? NoContent() : NotFound();
     }
 
+    /*
     // POST /api/cart/{id}/item
     [HttpPost("{id:int}/item")]
     [Authorize(Roles = "full access")]
@@ -87,7 +88,7 @@ public class CartController : ControllerBase
     // PUT /api/cart/{id}/item
     [HttpPut("{id:int}/item")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartReadDto>> EditItemToCart(int id, [FromBody] CartItemEditDto req)
+    public async Task<ActionResult<CartReadDto>> EditItemToCart(int id, [FromQuery] int product_id, [FromBody] CartItemEditDto req)
     {
         var cart = await _service.EditItemAsync(id, req);
         return cart is null ? NotFound() : Ok(cart);
@@ -112,4 +113,5 @@ public class CartController : ControllerBase
 
         return await _service.DeleteCartAsync(own.cart_id) ? NoContent() : NotFound();
     }
+    */
 }
