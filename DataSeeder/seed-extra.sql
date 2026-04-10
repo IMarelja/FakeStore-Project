@@ -3,8 +3,8 @@ WITH
     INSERT INTO users (username, email, password, role)
     VALUES
         ('alice',   'alice@example.com',   'password1', 'read-only'),
-        ('bobby',     'bobby@example.com',     'password2', 'read-only'),
-        ('charlie', 'charlie@example.com', 'password3', 'read-only'),
+        ('bobby',     'bobby@example.com',     'bobby1', 'full access'),
+        ('charlie', 'charlie@example.com', 'charlie1', 'full access'),
         ('admin',   'admin@example.com',   'admin',             'full access')
     RETURNING user_id, username
   ),
