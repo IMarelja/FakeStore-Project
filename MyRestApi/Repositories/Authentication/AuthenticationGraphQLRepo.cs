@@ -34,6 +34,7 @@ public class AuthenticationGraphQLRepo : IAuthenticationRepo
                 username
                 email
                 password
+                role
               }
             }
             """;
@@ -54,6 +55,7 @@ public class AuthenticationGraphQLRepo : IAuthenticationRepo
                 username
                 email
                 password
+                role
               }
             }
             """;
