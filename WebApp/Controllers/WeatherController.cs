@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FakeStore.WebApp.Controllers;
 
-[Authorize(Policy = "WeatherReadOnly")]
 public class WeatherController : Controller
 {
     private readonly FakeStore.gRPC.WeatherService.WeatherServiceClient _weatherClient;

@@ -1,6 +1,7 @@
 using System.Text;
 using FakeStore.WebApp.Configuration;
 using FakeStore.WebApp.Service;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,11 +13,19 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// -----------------------------------------
+//  Weather gRPC clinet
+// -----------------------------------------
+
 var grpcAddress = configuration["GrpcServer"]!;
 builder.Services.AddGrpcClient<FakeStore.gRPC.WeatherService.WeatherServiceClient>(o =>
 {
     o.Address = new Uri(grpcAddress);
 });
+
+// -----------------------------------------
+//  Selection between API's
+// -----------------------------------------
 
 var apiSelector = configuration.GetSection(ApiSelectorOptions.SectionName).Get<ApiSelectorOptions>()
     ?? throw new InvalidOperationException("Missing ApiSelector configuration.");
@@ -51,10 +60,11 @@ if (isPublicMode)
 
     builder.Services.AddAuthorization(options =>
     {
-        options.AddPolicy("WeatherReadOnly", policy => policy.RequireAssertion(_ => true));
+        options.AddPolicy("FullAccessRoleOnly", policy => policy.RequireAssertion(_ => true));
+        options.AddPolicy("ReadOnlyRole", policy => policy.RequireAssertion(_ => true));
     });
 }
-else
+if (isCustomMode)
 {
     builder.Services.AddScoped<IProductService, ProductCustomApiService>();
     builder.Services.AddScoped<IUserService, UserCustomApiService>();
@@ -84,9 +94,12 @@ else
 
     builder.Services.AddAuthorization(options =>
     {
-        options.AddPolicy("WeatherReadOnly", policy => policy.RequireRole("read-only"));
+        options.AddPolicy("FullAccessRoleOnly", policy => policy.RequireRole("full access"));
+        options.AddPolicy("ReadOnlyRole", policy => policy.RequireRole("read-only", "full access"));
     });
 }
+
+
 
 var app = builder.Build();
 
