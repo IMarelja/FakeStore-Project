@@ -197,6 +197,17 @@ public class Mutation
 
     public async Task<CartItem> CreateCartItem(CartItemInput input, [Service] FakeStoreDbContext db)
     {
+
+        var existingItem = await db.CartItems
+            .FirstOrDefaultAsync(ci => ci.CartId == input.CartId && ci.ProductId == input.ProductId);
+
+        if (existingItem is not null)
+        {
+            existingItem.Quantity += input.Quantity;
+            await db.SaveChangesAsync();
+            return existingItem;
+        }
+
         var item = new CartItem
         {
             CartId = input.CartId,
@@ -211,9 +222,16 @@ public class Mutation
     public async Task<CartItem?> UpdateCartItem(int id, CartItemInput input, [Service] FakeStoreDbContext db)
     {
         var item = await db.CartItems.FindAsync(id);
-        if (item is null) return null;
-        item.CartId = input.CartId;
-        item.ProductId = input.ProductId;
+        if (item is null) 
+            return null;
+
+        if (input.Quantity == 0)
+        {
+            db.CartItems.Remove(item);
+            await db.SaveChangesAsync();
+            return item;
+        }
+
         item.Quantity = input.Quantity;
         await db.SaveChangesAsync();
         return item;
