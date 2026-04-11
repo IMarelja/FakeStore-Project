@@ -5,7 +5,7 @@ option csharp_namespace = "FakeStore.gRPC";
 package weather;
 
 service WeatherService {
-  rpc GetWeather (WeatherRequest) returns (WeatherReply);
+  rpc GetWeather (WeatherRequest) returns (WeatherListReply);
 }
 
 message WeatherRequest {
@@ -24,4 +24,8 @@ message WeatherReply {
   string description = 9;
   string date = 10;
   string term = 11;
+}
+
+message WeatherListReply {
+  repeated WeatherReply items = 1;
 }

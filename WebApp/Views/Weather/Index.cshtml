@@ -19,29 +19,36 @@
 {
     if (Model.Found)
     {
-        <div class="card" style="max-width: 480px;">
-            <div class="card-header">
-                <strong>@Model.City</strong>
-                <span class="text-muted ms-2" style="font-size:.875rem;">@Model.Date &mdash; term @Model.Term h</span>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Condition</span><span>@Model.Description</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Temperature</span><span>@Model.Temperature &deg;C</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Humidity</span><span>@Model.Humidity %</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Pressure</span><span>@Model.Pressure hPa (@Model.PressureTendency)</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Wind</span><span>@Model.WindDirection @Model.WindSpeed km/h</span>
-                </li>
-            </ul>
+        <div class="alert alert-info" style="max-width: 480px;">
+            Found <strong>@Model.Cities.Count</strong> matching cities for "<strong>@Model.SearchCity</strong>".
         </div>
+
+        @foreach (var city in Model.Cities)
+        {
+            <div class="card mb-3" style="max-width: 480px;">
+                <div class="card-header">
+                    <strong>@city.City</strong>
+                    <span class="text-muted ms-2" style="font-size:.875rem;">@city.Date &mdash; term @city.Term h</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Condition</span><span>@city.Description</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Temperature</span><span>@city.Temperature &deg;C</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Humidity</span><span>@city.Humidity %</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Pressure</span><span>@city.Pressure hPa (@city.PressureTendency)</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Wind</span><span>@city.WindDirection @city.WindSpeed km/h</span>
+                    </li>
+                </ul>
+            </div>
+        }
     }
     else
     {

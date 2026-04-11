@@ -16,7 +16,7 @@ public class WeatherService : global::FakeStore.gRPC.WeatherService.WeatherServi
             ?? throw new InvalidOperationException("Missing connection string 'DefaultConnection'.");
     }
 
-    public override async Task<WeatherReply> GetWeather(WeatherRequest request, ServerCallContext context)
+    public override async Task<WeatherListReply> GetWeather(WeatherRequest request, ServerCallContext context)
     {
         var http = _httpFactory.CreateClient();
         var xml = await http.GetStringAsync(_urlConnection);
@@ -26,29 +26,34 @@ public class WeatherService : global::FakeStore.gRPC.WeatherService.WeatherServi
         var date = dateEl?.Element("Datum")?.Value ?? "";
         var term = dateEl?.Element("Termin")?.Value ?? "";
 
-        var grad = doc.Root?.Elements("Grad")
-            .FirstOrDefault(g =>
+        var matches = doc.Root?.Elements("Grad")
+            .Where(g =>
                 g.Element("GradIme")?.Value
-                    .Contains(request.City, StringComparison.OrdinalIgnoreCase) == true);
+                    .Contains(request.City, StringComparison.OrdinalIgnoreCase) == true)
+            .ToList()
+            ?? [];
 
-        if (grad == null)
-            return new WeatherReply { Found = false };
+        var response = new WeatherListReply();
 
-        var p = grad.Element("Podatci");
-
-        return new WeatherReply
+        foreach (var grad in matches)
         {
-            Found = true,
-            City = grad.Element("GradIme")?.Value ?? "",
-            Temperature = p?.Element("Temp")?.Value ?? "",
-            Humidity = p?.Element("Vlaga")?.Value ?? "",
-            Pressure = p?.Element("TlakMBara")?.Value ?? "",
-            PressureTendency = p?.Element("TlakTend")?.Value ?? "",
-            WindDirection = p?.Element("VjetarSmjer")?.Value ?? "",
-            WindSpeed = p?.Element("VjetarBrzina")?.Value ?? "",
-            Description = p?.Element("Vrijemee")?.Value ?? "",
-            Date = date,
-            Term = term,
-        };
+            var p = grad.Element("Podatci");
+            response.Items.Add(new WeatherReply
+            {
+                Found = true,
+                City = grad.Element("GradIme")?.Value ?? "",
+                Temperature = p?.Element("Temp")?.Value ?? "",
+                Humidity = p?.Element("Vlaga")?.Value ?? "",
+                Pressure = p?.Element("TlakMBara")?.Value ?? "",
+                PressureTendency = p?.Element("TlakTend")?.Value ?? "",
+                WindDirection = p?.Element("VjetarSmjer")?.Value ?? "",
+                WindSpeed = p?.Element("VjetarBrzina")?.Value ?? "",
+                Description = p?.Element("Vrijemee")?.Value ?? "",
+                Date = date,
+                Term = term,
+            });
+        }
+
+        return response;
     }
 }

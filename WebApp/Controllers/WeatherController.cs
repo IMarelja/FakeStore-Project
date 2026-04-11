@@ -28,20 +28,20 @@ public class WeatherController : Controller
 
         var reply = await _weatherClient.GetWeatherAsync(new global::WebApp.gRPC.WeatherRequest { City = city });
 
-        vm.Found = reply.Found;
-        if (reply.Found)
+        vm.Cities = reply.Items.Select(x => new WeatherCityViewModel
         {
-            vm.City = reply.City;
-            vm.Temperature = reply.Temperature;
-            vm.Humidity = reply.Humidity;
-            vm.Pressure = reply.Pressure;
-            vm.PressureTendency = reply.PressureTendency;
-            vm.WindDirection = reply.WindDirection;
-            vm.WindSpeed = reply.WindSpeed;
-            vm.Description = reply.Description;
-            vm.Date = reply.Date;
-            vm.Term = reply.Term;
-        }
+            City = x.City,
+            Temperature = x.Temperature,
+            Humidity = x.Humidity,
+            Pressure = x.Pressure,
+            PressureTendency = x.PressureTendency,
+            WindDirection = x.WindDirection,
+            WindSpeed = x.WindSpeed,
+            Description = x.Description,
+            Date = x.Date,
+            Term = x.Term
+        }).ToList();
+        vm.Found = vm.Cities.Count > 0;
 
         return View("Index", vm);
     }
