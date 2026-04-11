@@ -1,4 +1,5 @@
 using Grpc.Core;
+using Microsoft.Extensions.Configuration;
 using System.Xml.Linq;
 
 namespace FakeStore.gRPC.Services;
@@ -6,17 +7,19 @@ namespace FakeStore.gRPC.Services;
 public class WeatherService : global::FakeStore.gRPC.WeatherService.WeatherServiceBase
 {
     private readonly IHttpClientFactory _httpFactory;
-    private const string DhmzUrl = "https://vrijeme.hr/hrvatska_n.xml";
+    private readonly string _urlConnection;
 
-    public WeatherService(IHttpClientFactory httpFactory)
+    public WeatherService(IHttpClientFactory httpFactory, IConfiguration configuration)
     {
         _httpFactory = httpFactory;
+        _urlConnection = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Missing connection string 'DefaultConnection'.");
     }
 
     public override async Task<WeatherReply> GetWeather(WeatherRequest request, ServerCallContext context)
     {
         var http = _httpFactory.CreateClient();
-        var xml = await http.GetStringAsync(DhmzUrl);
+        var xml = await http.GetStringAsync(_urlConnection);
         var doc = XDocument.Parse(xml);
 
         var dateEl = doc.Root?.Element("DatumTermin");
