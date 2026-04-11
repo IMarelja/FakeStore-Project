@@ -20,3 +20,51 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.api-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.9rem 0.35rem 0.45rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1;
+  transition: transform 0.16s ease, box-shadow 0.2s ease;
+}
+
+.api-mode-pill:hover {
+  text-decoration: none;
+}
+
+.api-mode-pill:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.18);
+  outline-offset: 2px;
+}
+
+.api-mode-pill .logo-circle {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.api-mode-pill .logo-circle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.api-mode-pill.public {
+  background: #f5548e;
+  box-shadow: 0 8px 18px rgba(245, 84, 142, 0.3);
+}
+
+.api-mode-pill.custom {
+  background: #77216f;
+  box-shadow: 0 8px 18px rgba(119, 33, 111, 0.3);
+}
