@@ -1,6 +1,6 @@
 ﻿using FakeStore.ViewModel;
 
-namespace WebApp.Service;
+namespace FakeStore.WebApp.Service;
 
 public interface IAuthenticationService
 {
