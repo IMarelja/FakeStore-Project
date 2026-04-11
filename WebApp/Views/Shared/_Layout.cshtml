@@ -33,19 +33,34 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Weather" asp-action="Index">Weather</a>
                         </li>
                     </ul>
-                    <a class="@apiBadgeClass" asp-area="" asp-controller="Home" asp-action="Index" aria-label="@apiBadgeText">
-                        <span class="logo-circle" aria-hidden="true">
-                            @if (isCustomApi)
+                    <div class="d-flex align-items-center gap-2">
+                        @if (isCustomApi)
+                        {
+                            @if (User?.Identity?.IsAuthenticated ?? false)
                             {
-                                <img class="api-mode-logo" src="~/images/graphql.webp" alt="GraphQL logo" />
+                                <a class="btn btn-sm btn-outline-dark" asp-controller="Profile" asp-action="Index">Profile</a>
                             }
                             else
                             {
-                                <img class="api-mode-logo" src="~/images/beeceptor.png" alt="Beeceptor logo" />
+                                <a class="btn btn-sm btn-outline-dark" asp-controller="Login" asp-action="Index">Login</a>
+                                <a class="btn btn-sm btn-outline-secondary" asp-controller="Register" asp-action="Index">Register</a>
                             }
-                        </span>
-                        <span>@apiBadgeText</span>
-                    </a>
+                        }
+
+                        <a class="@apiBadgeClass" asp-area="" asp-controller="Home" asp-action="Index" aria-label="@apiBadgeText">
+                            <span class="logo-circle" aria-hidden="true">
+                                @if (isCustomApi)
+                                {
+                                    <img class="api-mode-logo" src="~/images/graphql.webp" alt="GraphQL logo" />
+                                }
+                                else
+                                {
+                                    <img class="api-mode-logo" src="~/images/beeceptor.png" alt="Beeceptor logo" />
+                                }
+                            </span>
+                            <span>@apiBadgeText</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>

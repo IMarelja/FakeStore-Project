@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Profile";
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+    var roles = User.FindAll(System.Security.Claims.ClaimTypes.Role).Select(r => r.Value).ToArray();
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <h1 class="h3 mb-3">User Profile</h1>
+        <div class="card p-3 shadow-sm">
+            <p><strong>User ID:</strong> @(userId ?? "-")</p>
+            <p><strong>Email:</strong> @(email ?? "-")</p>
+            <p class="mb-0"><strong>Roles:</strong> @(roles.Length > 0 ? string.Join(", ", roles) : "-")</p>
+        </div>
+    </div>
+</div>

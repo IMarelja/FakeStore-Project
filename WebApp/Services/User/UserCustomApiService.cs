@@ -4,37 +4,41 @@ namespace FakeStore.WebApp.Service;
 
 public class UserCustomApiService : IUserService
 {
-    public Task<bool> DeleteMe()
+
+
+    
+
+    public async Task<bool> DeleteMe()
     {
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteUser(int id)
+    public async Task<bool> DeleteUser(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<UserRead?> EditMe(UserUpdate user)
+    public async Task<UserRead?> EditMe(UserUpdate user)
     {
         throw new NotImplementedException();
     }
 
-    public Task<UserRead?> EditUser(int id, UserUpdate user)
+    public async Task<UserRead?> EditUser(int id, UserUpdate user)
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<UserRead>> GetAll()
+    public async Task<IEnumerable<UserRead>> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    public Task<UserRead?> GetById(int id)
+    public async Task<UserRead?> GetById(int id)
     {
         throw new NotImplementedException();
     }
 
-    public Task<UserRead?> GetMe()
+    public async Task<UserRead?> GetMe()
     {
         throw new NotImplementedException();
     }

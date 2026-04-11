@@ -1,9 +1,7 @@
-using System.Text;
 using FakeStore.WebApp.Configuration;
 using FakeStore.WebApp.Service;
 using Google.Protobuf.WellKnownTypes;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
@@ -51,6 +49,15 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri(baseUrl);
 });
 
+builder.Services.AddScoped<IAuthenticationService, AuthenticationCustomApiService>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        options.AccessDeniedPath = "/Login";
+        options.SlidingExpiration = true;
+    });
+
 if (isPublicMode)
 {
     builder.Services.AddScoped<IProductService, ProductPublicApiService>();
@@ -70,28 +77,6 @@ if (isCustomMode)
     builder.Services.AddScoped<IUserService, UserCustomApiService>();
     builder.Services.AddScoped<IOrderService, OrderCustomApiService>();
     builder.Services.AddScoped<ICartService, CartCustomApiService>();
-    builder.Services.AddScoped<IAuthenticationService, AuthenticationCustomApiService>();
-
-    var jwtSection = configuration.GetSection("Jwt");
-    var jwtKey = jwtSection["Key"] ?? throw new InvalidOperationException("Missing Jwt:Key configuration.");
-    var jwtIssuer = jwtSection["Issuer"] ?? throw new InvalidOperationException("Missing Jwt:Issuer configuration.");
-    var jwtAudience = jwtSection["Audience"] ?? throw new InvalidOperationException("Missing Jwt:Audience configuration.");
-
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtIssuer,
-                ValidAudience = jwtAudience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-            };
-        });
-
     builder.Services.AddAuthorization(options =>
     {
         options.AddPolicy("FullAccessRoleOnly", policy => policy.RequireRole("full access"));
@@ -115,12 +100,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-if (isCustomMode)
-{
-    app.UseAuthentication();
-}
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
