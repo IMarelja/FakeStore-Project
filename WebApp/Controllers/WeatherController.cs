@@ -6,9 +6,9 @@ namespace FakeStore.WebApp.Controllers;
 
 public class WeatherController : Controller
 {
-    private readonly FakeStore.gRPC.WeatherService.WeatherServiceClient _weatherClient;
+    private readonly global::WebApp.gRPC.WeatherService.WeatherServiceClient _weatherClient;
 
-    public WeatherController(FakeStore.gRPC.WeatherService.WeatherServiceClient weatherClient)
+    public WeatherController(global::WebApp.gRPC.WeatherService.WeatherServiceClient weatherClient)
     {
         _weatherClient = weatherClient;
     }
@@ -26,7 +26,7 @@ public class WeatherController : Controller
         if (string.IsNullOrWhiteSpace(city))
             return View("Index", vm);
 
-        var reply = await _weatherClient.GetWeatherAsync(new FakeStore.gRPC.WeatherRequest { City = city });
+        var reply = await _weatherClient.GetWeatherAsync(new global::WebApp.gRPC.WeatherRequest { City = city });
 
         vm.Found = reply.Found;
         if (reply.Found)

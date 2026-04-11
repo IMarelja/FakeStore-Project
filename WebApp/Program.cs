@@ -18,7 +18,7 @@ builder.Services.AddControllersWithViews();
 // -----------------------------------------
 
 var grpcAddress = configuration["GrpcServer"]!;
-builder.Services.AddGrpcClient<FakeStore.gRPC.WeatherService.WeatherServiceClient>(o =>
+builder.Services.AddGrpcClient<global::WebApp.gRPC.WeatherService.WeatherServiceClient>(o =>
 {
     o.Address = new Uri(grpcAddress);
 });
