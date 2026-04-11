@@ -80,17 +80,17 @@ public class OrderGraphQLRepo(IHttpClientFactory factory) : IOrderRepo
             {
                 userId      = req.UserId,
                 orderStatus = "Pending",
-                totalPrice  = 0.0
+                totalPrice  = 0.0,
+                items       = req.Items.Select(i => new
+                {
+                    productId = i.product_id,
+                    quantity  = i.quantity
+                }).ToList()
             }
         });
 
-        var order = JsonSerializer.Deserialize<Order>(
+        return JsonSerializer.Deserialize<Order>(
             data.GetProperty("createOrder").GetRawText(), _readOptions)!;
-
-        foreach (var item in req.Items)
-            await CreateOrderItemAsync(order.OrderId, item.product_id, item.quantity);
-
-        return (await GetByIdAsync(order.OrderId))!;
     }
 
     public async Task<Order?> UpdateAsync(int orderId, OrderUpdateDto req)
@@ -129,23 +129,6 @@ public class OrderGraphQLRepo(IHttpClientFactory factory) : IOrderRepo
 
         var data = await SendAsync(mutation, new { id = orderId });
         return data.GetProperty("deleteOrder").GetBoolean();
-    }
-
-    private async Task CreateOrderItemAsync(int orderId, int productId, int quantity)
-    {
-        const string mutation = """
-            mutation($input: OrderItemInput!) {
-              createOrderItem(input: $input) {
-                productId
-                quantity
-              }
-            }
-            """;
-
-        await SendAsync(mutation, new
-        {
-            input = new { orderId, productId, quantity }
-        });
     }
 
     private async Task<JsonElement> SendAsync(string query, object? variables = null)

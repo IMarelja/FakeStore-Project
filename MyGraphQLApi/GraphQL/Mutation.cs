@@ -232,6 +232,10 @@ public class Mutation
 
     public async Task<Order> CreateOrder(OrderInput input, [Service] FakeStoreDbContext db)
     {
+        var userExists = await db.Users.AnyAsync(u => u.UserId == input.UserId);
+        if (!userExists)
+            throw new Exception($"User with ID {input.UserId} does not exist.");
+
         var order = new Order
         {
             UserId = input.UserId,
@@ -239,8 +243,26 @@ public class Mutation
             TotalPrice = input.TotalPrice
         };
         db.Orders.Add(order);
+        await db.SaveChangesAsync(); // order.OrderId is populated here
+
+        decimal totalPrice = 0;
+        foreach (var item in input.Items)
+        {
+            var product = await db.Products.FindAsync(item.ProductId);
+            if (product is null) continue;
+
+            var discountedPrice = product.Price * (1 - product.Discount / 100m);
+            totalPrice += discountedPrice * item.Quantity;
+
+            var orderItem = new OrderItem { ProductId = item.ProductId, Quantity = item.Quantity };
+            db.OrderItems.Add(orderItem);
+            db.Entry(orderItem).Property("OrderId").CurrentValue = order.OrderId;
+        }
+
+        order.TotalPrice = totalPrice;
         await db.SaveChangesAsync();
         return order;
+        
     }
 
     public async Task<Order?> UpdateOrder(int id, OrderUpdateInput input, [Service] FakeStoreDbContext db)
