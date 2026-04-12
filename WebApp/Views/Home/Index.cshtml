@@ -30,35 +30,35 @@ else
         <ul class="nav nav-tabs" id="homeTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active"
-                        id="users-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#users-pane"
-                        type="button"
-                        role="tab"
-                        aria-controls="users-pane"
-                        aria-selected="true"
-                        data-tab-key="users">
-                    User
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link"
                         id="products-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#products-pane"
                         type="button"
                         role="tab"
                         aria-controls="products-pane"
-                        aria-selected="false"
+                        aria-selected="true"
                         data-tab-key="products">
                     Product
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        id="users-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#users-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="users-pane"
+                        aria-selected="false"
+                        data-tab-key="users">
+                    User
                 </button>
             </li>
         </ul>
 
         <div class="tab-content border border-top-0 rounded-bottom p-3 bg-body-tertiary" id="homeTabsContent">
-            @await Html.PartialAsync("_UsersTab", Model)
             @await Html.PartialAsync("_ProductsTab", Model)
+            @await Html.PartialAsync("_UsersTab", Model)
         </div>
     </div>
 }
@@ -72,13 +72,13 @@ else
             }
 
             const tabs = {
-                users: {
-                    url: root.dataset.usersUrl,
+                products: {
+                    url: root.dataset.productsUrl,
                     loaded: false,
                     loading: false
                 },
-                products: {
-                    url: root.dataset.productsUrl,
+                users: {
+                    url: root.dataset.usersUrl,
                     loaded: false,
                     loading: false
                 }
@@ -161,7 +161,7 @@ else
                 });
             });
 
-            fetchTabData('users');
+            fetchTabData('products');
         })();
     </script>
 }

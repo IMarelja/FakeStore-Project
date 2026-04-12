@@ -1,6 +1,8 @@
 ﻿@model FakeStore.WebApp.Models.HomePageViewModel
 
-<div class="tab-pane fade" id="products-pane" role="tabpanel" aria-labelledby="products-tab">
+
+<!-- Setting default set "show active" or undefault by removing it -->
+<div class="tab-pane fade show active" id="products-pane" role="tabpanel" aria-labelledby="products-tab">
     @if (Model.HasFullAccessRole)
     {
         <div class="d-flex justify-content-end mb-3">
