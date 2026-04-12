@@ -101,7 +101,6 @@ public class ProfileController : Controller
 
     private async Task<ProfilePageViewModel> BuildPageViewModel(string? successMessage = null, string? errorMessage = null)
     {
-        var canManage = (await _authorizationService.AuthorizeAsync(User, "FullAccessRoleOnly")).Succeeded;
         UserRead? me = null;
 
         try
@@ -116,7 +115,6 @@ public class ProfileController : Controller
         return new ProfilePageViewModel
         {
             CurrentUser = me,
-            CanManageProfile = canManage,
             SuccessMessage = successMessage,
             ErrorMessage = errorMessage,
             UpdateRequest = new UserUpdate

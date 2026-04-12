@@ -6,7 +6,6 @@ public class ProfilePageViewModel
 {
     public UserRead? CurrentUser { get; set; }
     public UserUpdate UpdateRequest { get; set; } = new();
-    public bool CanManageProfile { get; set; }
     public string? SuccessMessage { get; set; }
     public string? ErrorMessage { get; set; }
 }
