@@ -36,15 +36,23 @@
                     <div class="d-flex align-items-center gap-2">
                         @if (isCustomApi)
                         {
-                            @if (User?.Identity?.IsAuthenticated ?? false)
-                            {
-                                <a class="btn btn-sm btn-outline-dark" asp-controller="Profile" asp-action="Index">Profile</a>
-                            }
-                            else
-                            {
-                                <a class="btn btn-sm btn-outline-dark" asp-controller="Login" asp-action="Index">Login</a>
-                                <a class="btn btn-sm btn-outline-secondary" asp-controller="Register" asp-action="Index">Register</a>
-                            }
+                            <ul class="navbar-nav flex-row mb-0 me-1">
+                                @if (User?.Identity?.IsAuthenticated ?? false)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark px-2" asp-controller="Profile" asp-action="Index">Profile</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark px-2" asp-controller="Login" asp-action="Index">Login</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark px-2" asp-controller="Register" asp-action="Index">Register</a>
+                                    </li>
+                                }
+                            </ul>
                         }
 
                         <a class="@apiBadgeClass" asp-area="" asp-controller="Home" asp-action="Index" aria-label="@apiBadgeText">
