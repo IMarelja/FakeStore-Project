@@ -1,12 +1,43 @@
+@model FakeStore.ViewModel.RegisterRequest
 @{
     ViewData["Title"] = "Register";
+    var registerFailedMessage = ViewData["RegisterFailedMessage"] as string;
 }
 
 <div class="row justify-content-center">
     <div class="col-12 col-md-7 col-lg-5">
         <h1 class="h3 mb-3">Register</h1>
-        <div class="card p-3 shadow-sm">
-            <p class="mb-0">Registration page is available only in Custom API mode. Form handling can be added next.</p>
-        </div>
+        <form asp-controller="Register" asp-action="Index" method="post" class="card p-3 shadow-sm">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="username" class="form-label">Username</label>
+                <input asp-for="username" class="form-control" autocomplete="username" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="email" class="form-label">Email</label>
+                <input asp-for="email" type="email" class="form-control" autocomplete="email" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="password" class="form-label">Password</label>
+                <input asp-for="password" type="password" class="form-control" autocomplete="new-password" />
+            </div>
+
+            <div class="form-check mb-3">
+                <input asp-for="remember_me" class="form-check-input" />
+                <label asp-for="remember_me" class="form-check-label">Remember me</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Create account</button>
+
+            @if (!string.IsNullOrWhiteSpace(registerFailedMessage))
+            {
+                <div class="alert alert-warning mt-3 mb-0" role="alert">
+                    @registerFailedMessage
+                </div>
+            }
+        </form>
     </div>
 </div>
