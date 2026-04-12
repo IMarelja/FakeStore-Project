@@ -22,17 +22,4 @@
     </div>
     <div id="products-error" class="alert alert-danger d-none mt-3 mb-0"></div>
     <div id="products-list" class="row g-3 mt-1"></div>
-
-    @if (Model.HasFullAccessRole)
-    {
-        <div class="d-flex justify-content-end mt-3">
-            <a class="btn btn-outline-primary"
-               asp-controller="Home"
-               asp-action="ComingSoon"
-               asp-route-itemType="Product"
-               asp-route-featureAction="Add">
-                Add Product
-            </a>
-        </div>
-    }
 </div>
