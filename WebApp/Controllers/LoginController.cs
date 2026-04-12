@@ -1,5 +1,6 @@
 using FakeStore.ViewModel;
 using FakeStore.WebApp.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -8,18 +9,18 @@ using System.Security.Claims;
 
 namespace FakeStore.WebApp.Controllers
 {
+    [Authorize(Policy = "CustomApiOnly")]
     public class LoginController : Controller
     {
         private readonly FakeStore.WebApp.Service.IAuthenticationService _service;
-        private readonly IConfiguration _configuration;
 
-        public LoginController(FakeStore.WebApp.Service.IAuthenticationService service, IConfiguration configuration)
+        public LoginController(FakeStore.WebApp.Service.IAuthenticationService service)
         {
             _service = service;
-            _configuration = configuration;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Index()
         {
             if (User?.Identity?.IsAuthenticated ?? false)
@@ -27,23 +28,14 @@ namespace FakeStore.WebApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            if (!IsCustomApiMode())
-            {
-                return NotFound();
-            }
-
             return View(new LoginRequest());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Index(LoginRequest loginRequest)
         {
-            if (!IsCustomApiMode())
-            {
-                return NotFound();
-            }
-
             if (string.IsNullOrWhiteSpace(loginRequest.username) || string.IsNullOrWhiteSpace(loginRequest.password))
             {
                 ViewData["LoginFailedMessage"] = "Username and password are required.";
@@ -105,12 +97,6 @@ namespace FakeStore.WebApp.Controllers
                 ViewData["LoginFailedMessage"] = "Login failed. Invalid username or password.";
                 return View(loginRequest);
             }
-        }
-
-        private bool IsCustomApiMode()
-        {
-            var selectedApi = _configuration["ApiSelector:Selected"] ?? "Public";
-            return selectedApi.Equals("Custom", StringComparison.OrdinalIgnoreCase);
         }
     }
 }
