@@ -38,6 +38,9 @@ if (!isPublicMode && !isCustomMode)
     throw new InvalidOperationException("ApiSelector:Selected must be either 'Public' or 'Custom'.");
 }
 
+var runtimeSelectedApi = isCustomMode ? "Custom" : "Public";
+builder.Services.AddSingleton(new ApiRuntimeMode(runtimeSelectedApi, isPublicMode, isCustomMode));
+
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     var baseUrl = isCustomMode ? apiSelector.Apis.Custom : apiSelector.Apis.Public;
