@@ -10,6 +10,7 @@ var configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 
 // -----------------------------------------
 //  Weather gRPC clinet
@@ -67,6 +68,8 @@ if (isPublicMode)
 
     builder.Services.AddAuthorization(options =>
     {
+        options.AddPolicy("CustomApiOnly", policy => policy.RequireAssertion(_ => isCustomMode));
+        options.AddPolicy("PublicApiOnly", policy => policy.RequireAssertion(_ => isPublicMode));
         options.AddPolicy("FullAccessRoleOnly", policy => policy.RequireAssertion(_ => true));
         options.AddPolicy("ReadOnlyRole", policy => policy.RequireAssertion(_ => true));
     });
@@ -79,6 +82,8 @@ if (isCustomMode)
     builder.Services.AddScoped<ICartService, CartCustomApiService>();
     builder.Services.AddAuthorization(options =>
     {
+        options.AddPolicy("CustomApiOnly", policy => policy.RequireAssertion(_ => isCustomMode));
+        options.AddPolicy("PublicApiOnly", policy => policy.RequireAssertion(_ => isPublicMode));
         options.AddPolicy("FullAccessRoleOnly", policy => policy.RequireRole("full access"));
         options.AddPolicy("ReadOnlyRole", policy => policy.RequireRole("read-only", "full access"));
     });
