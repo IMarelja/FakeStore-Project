@@ -145,6 +145,7 @@ public class UserCustomApiService : IUserService
 
         var client = _httpClientFactory.CreateClient("ApiClient");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
         return client;
     }
 }
