@@ -1,8 +1,167 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model FakeStore.WebApp.Models.HomePageViewModel
+@{
+    ViewData["Title"] = "Home";
+    var usersDataUrl = Url.Action("TabData", "User") ?? string.Empty;
+    var productsDataUrl = Url.Action("TabData", "Product") ?? string.Empty;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (!Model.ShowTabScreen)
+{
+    <div class="row justify-content-center mt-4">
+        <div class="col-12 col-lg-8">
+            <div class="alert alert-warning text-center mb-0">
+                @Model.Message
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div id="home-tab-screen"
+         data-users-url="@usersDataUrl"
+         data-products-url="@productsDataUrl">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
+            <h1 class="h3 mb-0">The tab screen</h1>
+            <span class="badge @(Model.IsCustomApi ? "text-bg-dark" : "text-bg-secondary")">
+                @(Model.IsCustomApi ? "Custom API" : "Public API")
+            </span>
+        </div>
+
+        <ul class="nav nav-tabs" id="homeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active"
+                        id="users-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#users-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="users-pane"
+                        aria-selected="true"
+                        data-tab-key="users">
+                    User
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        id="products-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#products-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="products-pane"
+                        aria-selected="false"
+                        data-tab-key="products">
+                    Product
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content border border-top-0 rounded-bottom p-3 bg-body-tertiary" id="homeTabsContent">
+            @await Html.PartialAsync("_UsersTab", Model)
+            @await Html.PartialAsync("_ProductsTab", Model)
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        (() => {
+            const root = document.getElementById('home-tab-screen');
+            if (!root) {
+                return;
+            }
+
+            const tabs = {
+                users: {
+                    url: root.dataset.usersUrl,
+                    loaded: false,
+                    loading: false
+                },
+                products: {
+                    url: root.dataset.productsUrl,
+                    loaded: false,
+                    loading: false
+                }
+            };
+
+            function getElement(tabKey, suffix) {
+                return document.getElementById(`${tabKey}-${suffix}`);
+            }
+
+            function setLoading(tabKey, isLoading) {
+                getElement(tabKey, 'loading')?.classList.toggle('d-none', !isLoading);
+            }
+
+            function clearFeedback(tabKey) {
+                const errorEl = getElement(tabKey, 'error');
+
+                if (errorEl) {
+                    errorEl.classList.add('d-none');
+                    errorEl.textContent = '';
+                }
+            }
+
+            function showError(tabKey, message) {
+                const errorEl = getElement(tabKey, 'error');
+                if (!errorEl) {
+                    return;
+                }
+
+                errorEl.textContent = message;
+                errorEl.classList.remove('d-none');
+            }
+
+            async function fetchTabData(tabKey) {
+                const tab = tabs[tabKey];
+                if (!tab || tab.loaded || tab.loading) {
+                    return;
+                }
+
+                tab.loading = true;
+                clearFeedback(tabKey);
+                const listEl = getElement(tabKey, 'list');
+                if (listEl) {
+                    listEl.innerHTML = '';
+                }
+
+                setLoading(tabKey, true);
+
+                try {
+                    const response = await fetch(tab.url, {
+                        headers: { Accept: 'text/html' }
+                    });
+
+                    if (!response.ok) {
+                        const errorBody = await response.text();
+                        const errorMessage = errorBody?.trim() || 'Could not load data.';
+                        throw new Error(errorMessage);
+                    }
+
+                    const html = await response.text();
+                    if (listEl) {
+                        listEl.innerHTML = html;
+                    }
+                    tab.loaded = true;
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : 'Could not load data.';
+                    showError(tabKey, message);
+                } finally {
+                    tab.loading = false;
+                    setLoading(tabKey, false);
+                }
+            }
+
+            const tabButtons = document.querySelectorAll('#homeTabs button[data-bs-toggle="tab"]');
+            tabButtons.forEach((button) => {
+                button.addEventListener('shown.bs.tab', (event) => {
+                    const tabKey = event.target?.dataset?.tabKey;
+                    if (tabKey) {
+                        fetchTabData(tabKey);
+                    }
+                });
+            });
+
+            fetchTabData('users');
+        })();
+    </script>
+}

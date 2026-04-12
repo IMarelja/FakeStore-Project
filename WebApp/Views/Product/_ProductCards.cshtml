@@ -1,0 +1,120 @@
+﻿@using System.Linq
+@model FakeStore.WebApp.Models.ProductTabCardsViewModel
+
+@if (Model.Products is null || !Model.Products.Any())
+{
+    <div class="col-12">
+        <div class="alert alert-secondary mb-0">No products found.</div>
+    </div>
+}
+else
+{
+    @foreach (var product in Model.Products)
+    {
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-lg-8">
+                            <h5 class="card-title mb-3">@product.name</h5>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Product Id</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.product_id</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Description</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.description</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Price</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.price</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Unit</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.unit</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Image</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.image</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Discount</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.discount</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Availability</p>
+                                    <p class="mb-0 fw-semibold text-break">@(product.availability ? "In stock" : "Out of stock")</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Brand</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.brand</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="text-muted small mb-1">Category</p>
+                                    <p class="mb-0 fw-semibold text-break">@product.category</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-4">
+                            <div class="border rounded p-3 h-100">
+                                <p class="fw-semibold mb-2">Rating: @product.rating</p>
+                                <div class="overflow-auto pe-1" style="max-height: 260px;">
+                                    @if (product.reviews is null || !product.reviews.Any())
+                                    {
+                                        <p class="text-muted mb-0">No reviews available.</p>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var review in product.reviews)
+                                        {
+                                            <div class="card mb-2">
+                                                <div class="card-body py-2 px-3">
+                                                    <p class="mb-1 fw-semibold">Rating: @review.rating</p>
+                                                    <p class="mb-1 text-break">@review.comment</p>
+                                                    <p class="mb-0 small text-muted">User: @review.user_id</p>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                @if (Model.HasFullAccessRole)
+                                {
+                                    <a class="btn btn-sm btn-primary mt-3"
+                                       asp-controller="Home"
+                                       asp-action="ComingSoon"
+                                       asp-route-itemType="Review"
+                                       asp-route-featureAction="Add"
+                                       asp-route-id="@product.product_id">
+                                        Add review
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.HasFullAccessRole)
+                {
+                    <div class="card-footer d-flex justify-content-end gap-2">
+                        <a class="btn btn-sm btn-outline-primary"
+                           asp-controller="Home"
+                           asp-action="ComingSoon"
+                           asp-route-itemType="Product"
+                           asp-route-featureAction="Edit"
+                           asp-route-id="@product.product_id">
+                            Edit
+                        </a>
+                        <a class="btn btn-sm btn-outline-danger"
+                           asp-controller="Home"
+                           asp-action="ComingSoon"
+                           asp-route-itemType="Product"
+                           asp-route-featureAction="Delete"
+                           asp-route-id="@product.product_id">
+                            Delete
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

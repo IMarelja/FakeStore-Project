@@ -5,20 +5,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FakeStore.WebApp.Controllers;
 
-public class ProductController : Controller
+public class UserController : Controller
 {
-    private readonly IProductService _productService;
+    private readonly IUserService _userService;
     private readonly ApiRuntimeMode _apiRuntimeMode;
 
-    public ProductController(IProductService productService, ApiRuntimeMode apiRuntimeMode)
+    public UserController(IUserService userService, ApiRuntimeMode apiRuntimeMode)
     {
-        _productService = productService;
+        _userService = userService;
         _apiRuntimeMode = apiRuntimeMode;
-    }
-
-    public ActionResult Index()
-    {
-        return View();
     }
 
     [HttpGet]
@@ -31,18 +26,18 @@ public class ProductController : Controller
 
         try
         {
-            var products = await _productService.GetAll();
-            var vm = new ProductTabCardsViewModel
+            var users = await _userService.GetAll();
+            var vm = new UserTabCardsViewModel
             {
-                Products = products,
+                Users = users,
                 HasFullAccessRole = HasFullAccessRole()
             };
 
-            return PartialView("_ProductCards", vm);
+            return PartialView("_UserCards", vm);
         }
         catch
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Could not load products.");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Could not load users.");
         }
     }
 

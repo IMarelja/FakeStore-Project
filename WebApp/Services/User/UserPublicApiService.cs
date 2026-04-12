@@ -14,7 +14,7 @@ public class UserPublicApiService : IUserService
     public async Task<IEnumerable<UserRead>> GetAll()
     {
         var client = _httpClientFactory.CreateClient("ApiClient");
-        var response = await client.GetAsync("user");
+        var response = await client.GetAsync("users");
 
         if (!response.IsSuccessStatusCode)
         {

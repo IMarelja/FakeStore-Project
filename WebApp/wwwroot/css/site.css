@@ -70,3 +70,11 @@ body {
   background: #77216f;
   box-shadow: 0 8px 18px rgba(119, 33, 111, 0.3);
 }
+
+.home-tab-loading {
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

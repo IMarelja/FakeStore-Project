@@ -1,6 +1,6 @@
-﻿@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+﻿@inject FakeStore.WebApp.Configuration.ApiRuntimeMode ApiRuntimeMode
 @{
-    var selectedApi = Configuration["ApiSelector:Selected"] ?? "Public";
+    var selectedApi = ApiRuntimeMode.Selected;
     var isCustomApi = selectedApi.Equals("Custom", StringComparison.OrdinalIgnoreCase);
     var apiBadgeClass = isCustomApi ? "api-mode-pill custom" : "api-mode-pill public";
     var apiBadgeText = isCustomApi ? "Custom API" : "Public API";

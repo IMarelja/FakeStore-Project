@@ -1,0 +1,61 @@
+﻿@using System.Linq
+@model FakeStore.WebApp.Models.UserTabCardsViewModel
+
+@if (Model.Users is null || !Model.Users.Any())
+{
+    <div class="col-12">
+        <div class="alert alert-secondary mb-0">No users found.</div>
+    </div>
+}
+else
+{
+    @foreach (var user in Model.Users)
+    {
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-semibold">User @user.user_id</div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6 col-lg-3">
+                            <p class="text-muted small mb-1">User Id</p>
+                            <p class="mb-0 fw-semibold text-break">@user.user_id</p>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <p class="text-muted small mb-1">Username</p>
+                            <p class="mb-0 fw-semibold text-break">@user.username</p>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <p class="text-muted small mb-1">Email</p>
+                            <p class="mb-0 fw-semibold text-break">@user.email</p>
+                        </div>
+                        <div class="col-6 col-lg-3">
+                            <p class="text-muted small mb-1">Password</p>
+                            <p class="mb-0 fw-semibold text-break">@user.password</p>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.HasFullAccessRole)
+                {
+                    <div class="card-footer d-flex justify-content-end gap-2">
+                        <a class="btn btn-sm btn-outline-primary"
+                           asp-controller="Home"
+                           asp-action="ComingSoon"
+                           asp-route-itemType="User"
+                           asp-route-featureAction="Edit"
+                           asp-route-id="@user.user_id">
+                            Edit
+                        </a>
+                        <a class="btn btn-sm btn-outline-danger"
+                           asp-controller="Home"
+                           asp-action="ComingSoon"
+                           asp-route-itemType="User"
+                           asp-route-featureAction="Delete"
+                           asp-route-id="@user.user_id">
+                            Delete
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
