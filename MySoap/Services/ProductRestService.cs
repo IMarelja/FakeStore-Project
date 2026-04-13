@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using FakeStore.ViewModel;
+using System.Xml.Serialization;
 
 namespace MySoap.Services;
 

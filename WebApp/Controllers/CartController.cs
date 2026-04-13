@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using FakeStore.ViewModel;
 using FakeStore.WebApp.Configuration;
 using FakeStore.WebApp.Models;
@@ -10,21 +9,24 @@ namespace FakeStore.WebApp.Controllers;
 
 public class CartController : Controller
 {
-    private const string HomeFeedbackMessageKey = "HomeFeedbackMessage";
-    private const string HomeFeedbackIsErrorKey = "HomeFeedbackIsError";
-
     private readonly ICartService _cartService;
     private readonly IOrderService _orderService;
     private readonly ApiRuntimeMode _apiRuntimeMode;
+    private readonly IHomeService _homeService;
+    private readonly IJwtService _jwtService;
 
     public CartController(
         ICartService cartService,
         IOrderService orderService,
-        ApiRuntimeMode apiRuntimeMode)
+        ApiRuntimeMode apiRuntimeMode,
+        IHomeService homeService,
+        IJwtService jwtService)
     {
         _cartService = cartService;
         _orderService = orderService;
         _apiRuntimeMode = apiRuntimeMode;
+        _homeService = homeService;
+        _jwtService = jwtService;
     }
 
     [HttpGet]
@@ -34,7 +36,7 @@ public class CartController : Controller
 
         try
         {
-            var currentUserId = GetCurrentUserId();
+            var currentUserId = _jwtService.GetCurrectUserId();
             var carts = await _cartService.getAll();
             var orderedCarts = currentUserId.HasValue
                 ? carts.OrderBy(cart => cart.user_id == currentUserId.Value ? 0 : 1).ThenBy(cart => cart.cart_id)
@@ -44,7 +46,7 @@ public class CartController : Controller
             {
                 Carts = orderedCarts,
                 CurrentUserId = currentUserId,
-                HasFullAccessRole = HasFullAccessRole(),
+                HasFullAccessRole = _jwtService.HasFullAccessRole(),
                 IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
@@ -54,7 +56,7 @@ public class CartController : Controller
         {
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
-                BuildErrorMessage("Could not load carts.", ex));
+                _homeService.BuildHomeErrorMessage("Could not load carts.", ex));
         }
     }
 
@@ -67,8 +69,8 @@ public class CartController : Controller
     {
         if (quantity <= 0)
         {
-            SetHomeFeedback("Quantity must be greater than zero.", isError: true);
-            return RedirectToHomeTab("products");
+            _homeService.SetFeedback(TempData, "Quantity must be greater than zero.", isError: true);
+            return _homeService.RedirectToHomeTab("products");
         }
 
         try
@@ -78,14 +80,14 @@ public class CartController : Controller
                 ProductId = productId,
                 Quantity = quantity
             });
-            SetHomeFeedback("Item added to your cart.", isError: false);
+            _homeService.SetFeedback(TempData, "Item added to your cart.", isError: false);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not add item to cart.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not add item to cart.", ex), isError: true);
         }
 
-        return RedirectToHomeTab("products");
+        return _homeService.RedirectToHomeTab("products");
     }
 
     [HttpPost]
@@ -97,8 +99,8 @@ public class CartController : Controller
     {
         if (quantity <= 0)
         {
-            SetHomeFeedback("Quantity must be greater than zero.", isError: true);
-            return RedirectToHomeTab("cart");
+            _homeService.SetFeedback(TempData, "Quantity must be greater than zero.", isError: true);
+            return _homeService.RedirectToHomeTab("cart");
         }
 
         try
@@ -106,18 +108,18 @@ public class CartController : Controller
             var updated = await _cartService.editItemToOwnCart(cartItemId, quantity);
             if (updated is null)
             {
-                SetHomeFeedback("Cart item not found.", isError: true);
-                return RedirectToHomeTab("cart");
+                _homeService.SetFeedback(TempData, "Cart item not found.", isError: true);
+                return _homeService.RedirectToHomeTab("cart");
             }
 
-            SetHomeFeedback("Item quantity updated.", isError: false);
+            _homeService.SetFeedback(TempData, "Item quantity updated.", isError: false);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not update item quantity.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not update item quantity.", ex), isError: true);
         }
 
-        return RedirectToHomeTab("cart");
+        return _homeService.RedirectToHomeTab("cart");
     }
 
     [HttpPost]
@@ -130,16 +132,16 @@ public class CartController : Controller
         try
         {
             var deleted = await _cartService.deleteItemFromOwnCart(productId);
-            SetHomeFeedback(
+            _homeService.SetFeedback(TempData,
                 deleted ? "Item removed from your cart." : "Cart item not found.",
                 isError: !deleted);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not remove item from cart.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not remove item from cart.", ex), isError: true);
         }
 
-        return RedirectToHomeTab("cart");
+        return _homeService.RedirectToHomeTab("cart");
     }
 
     [HttpPost]
@@ -152,16 +154,16 @@ public class CartController : Controller
         try
         {
             var deleted = await _cartService.deleteOwnCart();
-            SetHomeFeedback(
+            _homeService.SetFeedback(TempData,
                 deleted ? "Your cart has been wiped." : "Your cart was not found.",
                 isError: !deleted);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not wipe your cart.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not wipe your cart.", ex), isError: true);
         }
 
-        return RedirectToHomeTab("cart");
+        return _homeService.RedirectToHomeTab("cart");
     }
 
     [HttpPost]
@@ -176,20 +178,20 @@ public class CartController : Controller
             var ownCart = await _cartService.getOwnCart();
             if (ownCart is null)
             {
-                SetHomeFeedback("Your cart was not found.", isError: true);
-                return RedirectToHomeTab("cart");
+                _homeService.SetFeedback(TempData, "Your cart was not found.", isError: true);
+                return _homeService.RedirectToHomeTab("cart");
             }
 
             if (ownCart.items.Count == 0)
             {
-                SetHomeFeedback("Your cart is empty.", isError: true);
-                return RedirectToHomeTab("cart");
+                _homeService.SetFeedback(TempData, "Your cart is empty.", isError: true);
+                return _homeService.RedirectToHomeTab("cart");
             }
 
             if (ownCart.items.Any(item => item.quantity <= 0))
             {
-                SetHomeFeedback("Cart contains invalid item quantities.", isError: true);
-                return RedirectToHomeTab("cart");
+                _homeService.SetFeedback(TempData, "Cart contains invalid item quantities.", isError: true);
+                return _homeService.RedirectToHomeTab("cart");
             }
 
             var created = await _orderService.AddOrder(new OrderCreate
@@ -203,14 +205,14 @@ public class CartController : Controller
             });
 
             await _cartService.deleteOwnCart();
-            SetHomeFeedback($"Order #{created.OrderId}, Status: {created.Status}, Message: {created.Message}", isError: false);
+            _homeService.SetFeedback(TempData, $"Order #{created.OrderId}, Status: {created.Status}, Message: {created.Message}", isError: false);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not place order.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not place order.", ex), isError: true);
         }
 
-        return RedirectToHomeTab("cart");
+        return _homeService.RedirectToHomeTab("cart");
     }
 
     [HttpPost]
@@ -223,49 +225,15 @@ public class CartController : Controller
         try
         {
             var deleted = await _cartService.deleteCart(cartId);
-            SetHomeFeedback(
+            _homeService.SetFeedback(TempData,
                 deleted ? $"Cart #{cartId} deleted." : "Cart not found.",
                 isError: !deleted);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not delete cart.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not delete cart.", ex), isError: true);
         }
 
-        return RedirectToHomeTab("cart");
-    }
-
-    private IActionResult RedirectToHomeTab(string tabKey)
-    {
-        return RedirectToAction("Index", "Home", new { tab = tabKey });
-    }
-
-    private void SetHomeFeedback(string message, bool isError)
-    {
-        TempData[HomeFeedbackMessageKey] = message;
-        TempData[HomeFeedbackIsErrorKey] = isError;
-    }
-
-    private bool HasFullAccessRole()
-    {
-        return User?.Claims.Any(claim =>
-            claim.Type == ClaimTypes.Role
-            && claim.Value.Equals("full access", StringComparison.OrdinalIgnoreCase)) ?? false;
-    }
-
-    private int? GetCurrentUserId()
-    {
-        var userIdValue = User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        return int.TryParse(userIdValue, out var userId) ? userId : null;
-    }
-
-    private static string BuildErrorMessage(string prefix, Exception ex)
-    {
-        if (ex is HttpRequestException requestException && !string.IsNullOrWhiteSpace(requestException.Message))
-        {
-            return $"{prefix} {requestException.Message}";
-        }
-
-        return prefix;
+        return _homeService.RedirectToHomeTab("cart");
     }
 }

@@ -16,15 +16,21 @@ public class UserController : Controller
     private readonly IUserService _userService;
     private readonly IAuthenticationService _authenticationService;
     private readonly ApiRuntimeMode _apiRuntimeMode;
+    private readonly IHomeService _homeService;
+    private readonly IJwtService _jwtService;
 
     public UserController(
         IUserService userService,
         IAuthenticationService authenticationService,
-        ApiRuntimeMode apiRuntimeMode)
+        ApiRuntimeMode apiRuntimeMode,
+        IHomeService homeService,
+        IJwtService jwtService)
     {
         _userService = userService;
         _authenticationService = authenticationService;
         _apiRuntimeMode = apiRuntimeMode;
+        _homeService = homeService;
+        _jwtService = jwtService;
     }
 
     [HttpGet]
@@ -41,7 +47,7 @@ public class UserController : Controller
             var vm = new UserTabCardsViewModel
             {
                 Users = users,
-                HasFullAccessRole = HasFullAccessRole(),
+                HasFullAccessRole = _jwtService.HasFullAccessRole(),
                 IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
@@ -98,7 +104,7 @@ public class UserController : Controller
         }
         catch (Exception ex)
         {
-            vm.ErrorMessage = BuildErrorMessage("User creation failed.", ex);
+            vm.ErrorMessage = _homeService.BuildHomeErrorMessage("User creation failed.", ex);
             return View(vm);
         }
     }
@@ -119,7 +125,7 @@ public class UserController : Controller
             return View(BuildEditPageVm(
                 id,
                 new UserFormInputModel(),
-                errorMessage: BuildErrorMessage("Could not load user data.", ex)));
+                errorMessage: _homeService.BuildHomeErrorMessage("Could not load user data.", ex)));
         }
 
         if (user is null)
@@ -172,7 +178,7 @@ public class UserController : Controller
         }
         catch (Exception ex)
         {
-            vm.ErrorMessage = BuildErrorMessage("User update failed.", ex);
+            vm.ErrorMessage = _homeService.BuildHomeErrorMessage("User update failed.", ex);
             return View(vm);
         }
     }
@@ -209,7 +215,7 @@ public class UserController : Controller
         {
             return View(new UserDeletePageViewModel
             {
-                ErrorMessage = BuildErrorMessage("Could not load user data.", ex)
+                ErrorMessage = _homeService.BuildHomeErrorMessage("Could not load user data.", ex)
             });
         }
     }
@@ -239,7 +245,7 @@ public class UserController : Controller
         {
             return View("Delete", new UserDeletePageViewModel
             {
-                ErrorMessage = BuildErrorMessage("User deletion failed.", ex)
+                ErrorMessage = _homeService.BuildHomeErrorMessage("User deletion failed.", ex)
             });
         }
     }
@@ -281,27 +287,10 @@ public class UserController : Controller
         return TempData[key]?.ToString();
     }
 
-    private static string BuildErrorMessage(string prefix, Exception ex)
-    {
-        if (ex is HttpRequestException requestException && !string.IsNullOrWhiteSpace(requestException.Message))
-        {
-            return $"{prefix} {requestException.Message}";
-        }
-
-        return prefix;
-    }
-
     private bool CanAccessTabScreen()
     {
         var isSignedIn = User?.Identity?.IsAuthenticated ?? false;
 
         return _apiRuntimeMode.IsPublicMode || (_apiRuntimeMode.IsCustomMode && isSignedIn);
-    }
-
-    private bool HasFullAccessRole()
-    {
-        return User?.Claims.Any(c =>
-            c.Type == System.Security.Claims.ClaimTypes.Role
-            && c.Value.Equals("full access", StringComparison.OrdinalIgnoreCase)) ?? false;
     }
 }

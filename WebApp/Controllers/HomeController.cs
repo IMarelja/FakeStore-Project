@@ -2,18 +2,21 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FakeStore.WebApp.Models;
 using FakeStore.WebApp.Configuration;
-using System.Security.Claims;
+using FakeStore.WebApp.Service;
 
 namespace FakeStore.WebApp.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ApiRuntimeMode _apiRuntimeMode;
+    private readonly IJwtService _jwtService;
 
     public HomeController(
-        ApiRuntimeMode apiRuntimeMode)
+        ApiRuntimeMode apiRuntimeMode,
+        IJwtService jwtService)
     {
         _apiRuntimeMode = apiRuntimeMode;
+        _jwtService = jwtService;
     }
 
     public IActionResult Index(string? tab = null)
@@ -50,8 +53,7 @@ public class HomeController : Controller
         var isPublicApi = _apiRuntimeMode.IsPublicMode;
         var isCustomApi = _apiRuntimeMode.IsCustomMode;
         var isSignedIn = User?.Identity?.IsAuthenticated ?? false;
-        var hasFullAccessRole = User?.Claims.Any(c =>
-            c.Type == ClaimTypes.Role && c.Value.Equals("full access", StringComparison.OrdinalIgnoreCase)) ?? false;
+        var hasFullAccessRole = _jwtService.HasFullAccessRole();
         var normalizedTab = NormalizeTabKey(requestedTab);
 
         return new HomePageViewModel

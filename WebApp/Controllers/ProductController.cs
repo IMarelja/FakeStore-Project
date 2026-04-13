@@ -17,15 +17,21 @@ public class ProductController : Controller
     private readonly IProductService _productService;
     private readonly ApiRuntimeMode _apiRuntimeMode;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IHomeService _homeService;
+    private readonly IJwtService _jwtService;
 
     public ProductController(
         IProductService productService,
         ApiRuntimeMode apiRuntimeMode,
-        IWebHostEnvironment webHostEnvironment)
+        IWebHostEnvironment webHostEnvironment,
+        IHomeService homeService,
+        IJwtService jwtService)
     {
         _productService = productService;
         _apiRuntimeMode = apiRuntimeMode;
         _webHostEnvironment = webHostEnvironment;
+        _homeService = homeService;
+        _jwtService = jwtService;
     }
 
     public ActionResult Index()
@@ -47,7 +53,7 @@ public class ProductController : Controller
             var vm = new ProductTabCardsViewModel
             {
                 Products = products,
-                HasFullAccessRole = HasFullAccessRole(),
+                HasFullAccessRole = _jwtService.HasFullAccessRole(),
                 IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
@@ -109,7 +115,7 @@ public class ProductController : Controller
         }
         catch (Exception ex)
         {
-            vm.ErrorMessage = BuildErrorMessage("Product creation failed.", ex);
+            vm.ErrorMessage = _homeService.BuildHomeErrorMessage("Product creation failed.", ex);
             return View(vm);
         }
     }
@@ -130,7 +136,7 @@ public class ProductController : Controller
             return View(BuildEditPageVm(
                 id,
                 new ProductFormInputModel(),
-                errorMessage: BuildErrorMessage("Could not load product data.", ex)));
+                errorMessage: _homeService.BuildHomeErrorMessage("Could not load product data.", ex)));
         }
 
         if (product is null)
@@ -165,7 +171,7 @@ public class ProductController : Controller
         }
         catch (Exception ex)
         {
-            vm.ErrorMessage = BuildErrorMessage("Could not load product data.", ex);
+            vm.ErrorMessage = _homeService.BuildHomeErrorMessage("Could not load product data.", ex);
             return View(vm);
         }
 
@@ -230,7 +236,7 @@ public class ProductController : Controller
                 TryDeleteStoredProductImage(newStoredImage);
             }
 
-            vm.ErrorMessage = BuildErrorMessage("Product update failed.", ex);
+            vm.ErrorMessage = _homeService.BuildHomeErrorMessage("Product update failed.", ex);
             return View(vm);
         }
     }
@@ -267,7 +273,7 @@ public class ProductController : Controller
         {
             return View(new ProductDeletePageViewModel
             {
-                ErrorMessage = BuildErrorMessage("Could not load product data.", ex)
+                ErrorMessage = _homeService.BuildHomeErrorMessage("Could not load product data.", ex)
             });
         }
     }
@@ -297,7 +303,7 @@ public class ProductController : Controller
         {
             return View("Delete", new ProductDeletePageViewModel
             {
-                ErrorMessage = BuildErrorMessage("Product deletion failed.", ex)
+                ErrorMessage = _homeService.BuildHomeErrorMessage("Product deletion failed.", ex)
             });
         }
     }
@@ -349,7 +355,7 @@ public class ProductController : Controller
             var failedVm = await BuildReviewPageVm(
                 id,
                 form,
-                errorMessage: BuildErrorMessage("Review creation failed.", ex));
+                errorMessage: _homeService.BuildHomeErrorMessage("Review creation failed.", ex));
             return View(failedVm);
         }
     }
@@ -404,7 +410,7 @@ public class ProductController : Controller
         }
         catch (Exception ex)
         {
-            errorMessage ??= BuildErrorMessage("Could not load product data.", ex);
+            errorMessage ??= _homeService.BuildHomeErrorMessage("Could not load product data.", ex);
         }
 
         return new ProductReviewPageViewModel
@@ -538,27 +544,10 @@ public class ProductController : Controller
         return TempData[key]?.ToString();
     }
 
-    private static string BuildErrorMessage(string prefix, Exception ex)
-    {
-        if (ex is HttpRequestException requestException && !string.IsNullOrWhiteSpace(requestException.Message))
-        {
-            return $"{prefix} {requestException.Message}";
-        }
-
-        return prefix;
-    }
-
     private bool CanAccessTabScreen()
     {
         var isSignedIn = User?.Identity?.IsAuthenticated ?? false;
 
         return _apiRuntimeMode.IsPublicMode || (_apiRuntimeMode.IsCustomMode && isSignedIn);
-    }
-
-    private bool HasFullAccessRole()
-    {
-        return User?.Claims.Any(c =>
-            c.Type == System.Security.Claims.ClaimTypes.Role
-            && c.Value.Equals("full access", StringComparison.OrdinalIgnoreCase)) ?? false;
     }
 }

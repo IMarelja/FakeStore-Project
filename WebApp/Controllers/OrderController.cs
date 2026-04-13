@@ -4,23 +4,27 @@ using FakeStore.WebApp.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using System.Security.Claims;
 
 namespace FakeStore.WebApp.Controllers;
 
 
 public class OrderController : Controller
 {
-    private const string HomeFeedbackMessageKey = "HomeFeedbackMessage";
-    private const string HomeFeedbackIsErrorKey = "HomeFeedbackIsError";
-
     private readonly IOrderService _orderService;
     private readonly ApiRuntimeMode _apiRuntimeMode;
+    private readonly IHomeService _homeService;
+    private readonly IJwtService _jwtService;
 
-    public OrderController(IOrderService orderService, ApiRuntimeMode apiRuntimeMode)
+    public OrderController(
+        IOrderService orderService,
+        ApiRuntimeMode apiRuntimeMode,
+        IHomeService homeService,
+        IJwtService jwtService)
     {
         _orderService = orderService;
         _apiRuntimeMode = apiRuntimeMode;
+        _homeService = homeService;
+        _jwtService = jwtService;
     }
 
     [HttpGet]
@@ -28,7 +32,7 @@ public class OrderController : Controller
     {
         try
         {
-            var currentUserId = GetCurrentUserId();
+            var currentUserId = _jwtService.GetCurrectUserId();
             var orders = await _orderService.GetAll();
 
             var sortedOrders = currentUserId.HasValue
@@ -40,7 +44,7 @@ public class OrderController : Controller
             {
                 Orders = sortedOrders,
                 CurrentUserId = currentUserId,
-                HasFullAccessRole = HasFullAccessRole(),
+                HasFullAccessRole = _jwtService.HasFullAccessRole(),
                 IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
@@ -50,7 +54,7 @@ public class OrderController : Controller
         {
             return StatusCode(
                 StatusCodes.Status500InternalServerError,
-                BuildErrorMessage("Could not load orders.", ex));
+                _homeService.BuildHomeErrorMessage("Could not load orders.", ex));
         }
     }
 
@@ -63,25 +67,25 @@ public class OrderController : Controller
     {
         if (string.IsNullOrWhiteSpace(status))
         {
-            SetHomeFeedback("Order status cannot be empty.", isError: true);
-            return RedirectToHomeTab();
+            _homeService.SetFeedback(TempData, "Order status cannot be empty.", isError: true);
+            return _homeService.RedirectToHomeTab("orders");
         }
 
         try
         {
             var updatedOrder = await _orderService.EditOrder(orderId, status.Trim());
-            SetHomeFeedback($"Order #{updatedOrder.OrderId} status updated to {updatedOrder.Status}.", isError: false);
+            _homeService.SetFeedback(TempData, $"Order #{updatedOrder.OrderId} status updated to {updatedOrder.Status}.", isError: false);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            SetHomeFeedback("Order not found.", isError: true);
+            _homeService.SetFeedback(TempData, "Order not found.", isError: true);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not update order status.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not update order status.", ex), isError: true);
         }
 
-        return RedirectToHomeTab();
+        return _homeService.RedirectToHomeTab("orders");
     }
 
     [HttpPost]
@@ -94,49 +98,15 @@ public class OrderController : Controller
         try
         {
             var deleted = await _orderService.DeleteOrder(orderId);
-            SetHomeFeedback(
+            _homeService.SetFeedback(TempData,
                 deleted ? $"Order #{orderId} deleted." : "Order not found.",
                 isError: !deleted);
         }
         catch (Exception ex)
         {
-            SetHomeFeedback(BuildErrorMessage("Could not delete order.", ex), isError: true);
+            _homeService.SetFeedback(TempData, _homeService.BuildHomeErrorMessage("Could not delete order.", ex), isError: true);
         }
 
-        return RedirectToHomeTab();
-    }
-
-    private IActionResult RedirectToHomeTab()
-    {
-        return RedirectToAction("Index", "Home", new { tab = "orders" });
-    }
-
-    private void SetHomeFeedback(string message, bool isError)
-    {
-        TempData[HomeFeedbackMessageKey] = message;
-        TempData[HomeFeedbackIsErrorKey] = isError;
-    }
-
-    private bool HasFullAccessRole()
-    {
-        return User?.Claims.Any(c =>
-            c.Type == ClaimTypes.Role
-            && c.Value.Equals("full access", StringComparison.OrdinalIgnoreCase)) ?? false;
-    }
-
-    private int? GetCurrentUserId()
-    {
-        var userIdValue = User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        return int.TryParse(userIdValue, out var userId) ? userId : null;
-    }
-
-    private static string BuildErrorMessage(string prefix, Exception ex)
-    {
-        if (ex is HttpRequestException requestException && !string.IsNullOrWhiteSpace(requestException.Message))
-        {
-            return $"{prefix} {requestException.Message}";
-        }
-
-        return prefix;
+        return _homeService.RedirectToHomeTab("orders");
     }
 }
