@@ -17,7 +17,20 @@
 
             <div class="mb-3">
                 <label asp-for="password" class="form-label">Password</label>
-                <input asp-for="password" type="password" class="form-control" autocomplete="current-password" />
+                <div class="input-group">
+                    <input asp-for="password"
+                           type="password"
+                           class="form-control"
+                           autocomplete="current-password"
+                           data-password-input />
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            data-password-toggle
+                            data-show-text="Show"
+                            data-hide-text="Hide"
+                            aria-label="Show password"
+                            aria-pressed="false">Show</button>
+                </div>
             </div>
 
             <div class="form-check mb-3">
