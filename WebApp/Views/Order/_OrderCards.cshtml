@@ -1,15 +1,16 @@
 ﻿@using System.Linq
-@model IEnumerable<FakeStore.ViewModel.OrderRead>
+@model FakeStore.WebApp.Models.OrderTabCardsViewModel
 
-@if (Model is null || !Model.Any())
+@if (Model.Orders is null || !Model.Orders.Any())
 {
     <div class="col-12">
-        <div class="alert alert-secondary mb-0">No orders found for your account.</div>
+        <div class="alert alert-secondary mb-0">No orders found.</div>
     </div>
 }
 else
 {
-    @foreach (var order in Model)
+
+    @foreach (var order in Model.Orders)
     {
         var orderItems = order.items ?? [];
 
@@ -52,6 +53,31 @@ else
                         </ul>
                     }
                 </div>
+                @if (Model.HasFullAccessRole)
+                {
+                    <div class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                        <form asp-controller="Order"
+                              asp-action="UpdateStatus"
+                              method="post"
+                              class="d-flex align-items-center gap-2 flex-wrap">
+                            <input type="hidden" name="orderId" value="@order.order_id" />
+                            <label for="order-status-@order.order_id" class="small text-muted mb-0">Status</label>
+                            <input id="order-status-@order.order_id"
+                                   type="text"
+                                   class="form-control form-control-sm"
+                                   style="width: 180px;"
+                                   name="status"
+                                   value="@order.status"
+                                   maxlength="50"
+                                   required />
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Update status</button>
+                        </form>
+                        <form asp-controller="Order" asp-action="DeleteOrder" method="post" class="d-inline">
+                            <input type="hidden" name="orderId" value="@order.order_id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete order</button>
+                        </form>
+                    </div>
+                }
             </div>
         </div>
     }

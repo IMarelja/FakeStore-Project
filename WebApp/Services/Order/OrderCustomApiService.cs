@@ -57,6 +57,26 @@ public class OrderCustomApiService : IOrderService
             ?? throw new InvalidOperationException("Order API returned an empty update response.");
     }
 
+    public async Task<bool> DeleteOrder(int id)
+    {
+        var client = CreateAuthorizedClient();
+        var response = await client.DeleteAsync($"orders/{id}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+        {
+            return false;
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException(
+                $"Delete order failed ({(int)response.StatusCode} {response.ReasonPhrase}). {body}");
+        }
+
+        return true;
+    }
+
     public async Task<IEnumerable<OrderRead>> GetAll()
     {
         var client = CreateAuthorizedClient();

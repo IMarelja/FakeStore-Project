@@ -44,6 +44,11 @@ public class OrderPublicApiService : IOrderService
         throw new NotImplementedException();
     }
 
+    public Task<bool> DeleteOrder(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<OrderRead?> GetById(int id)
     {
         throw new NotImplementedException();

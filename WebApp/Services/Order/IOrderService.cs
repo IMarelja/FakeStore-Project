@@ -9,4 +9,5 @@ public interface IOrderService
     Task<OrderRead?> GetById(int id);
     Task<OrderCreateResponse> AddOrder(OrderCreate orderCreate);
     Task<OrderCreateResponse> EditOrder(int id, string status);
+    Task<bool> DeleteOrder(int id);
 }
