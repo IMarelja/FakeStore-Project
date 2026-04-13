@@ -8,9 +8,7 @@ using System.Security.Claims;
 
 namespace FakeStore.WebApp.Controllers;
 
-[Authorize]
-[Authorize(Policy = "CustomApiOnly")]
-[Authorize(Policy = "ReadOnlyRole")]
+
 public class OrderController : Controller
 {
     private const string HomeFeedbackMessageKey = "HomeFeedbackMessage";
@@ -56,7 +54,9 @@ public class OrderController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     [Authorize(Policy = "FullAccessRoleOnly")]
+    [Authorize(Policy = "CustomApiOnly")]
     public async Task<IActionResult> UpdateStatus(int orderId, string status)
     {
         if (string.IsNullOrWhiteSpace(status))
@@ -84,7 +84,9 @@ public class OrderController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     [Authorize(Policy = "FullAccessRoleOnly")]
+    [Authorize(Policy = "CustomApiOnly")]
     public async Task<IActionResult> DeleteOrder(int orderId)
     {
         try
