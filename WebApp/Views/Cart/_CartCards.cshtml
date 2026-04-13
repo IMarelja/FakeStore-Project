@@ -9,10 +9,34 @@
 }
 else
 {
+    var hasCurrentUser = Model.CurrentUserId.HasValue;
+    var hasOwnCart = hasCurrentUser
+        && Model.Carts.Any(cart => cart.user_id == Model.CurrentUserId!.Value);
+    var renderedOwnSectionHeader = false;
+    var renderedOthersSectionHeader = false;
+
     @foreach (var cart in Model.Carts)
     {
         var isOwnCart = Model.CurrentUserId.HasValue && Model.CurrentUserId.Value == cart.user_id;
         var showFooterActions = Model.HasFullAccessRole;
+
+        if (hasOwnCart && isOwnCart && !renderedOwnSectionHeader)
+        {
+            renderedOwnSectionHeader = true;
+            <div class="col-12">
+                <div class="small fw-semibold text-uppercase text-muted">Your Cart</div>
+                <hr class="mt-1 mb-3" />
+            </div>
+        }
+
+        if (hasOwnCart && !isOwnCart && !renderedOthersSectionHeader)
+        {
+            renderedOthersSectionHeader = true;
+            <div class="col-12">
+                <div class="small fw-semibold text-uppercase text-muted">Other Users' Carts</div>
+                <hr class="mt-1 mb-3" />
+            </div>
+        }
 
         <div class="col-12">
             <div class="card shadow-sm">
