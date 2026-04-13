@@ -10,9 +10,9 @@ public class ProductUpdateDto
     public string Description { get; set; } = string.Empty;
     [Required]
     public decimal Price { get; set; }
-    [Required]
+    [Required(AllowEmptyStrings = true)]
     public string Unit { get; set; } = string.Empty;
-    [Required]
+    [Required(AllowEmptyStrings = true)]
     public string Image { get; set; } = string.Empty;
     [Required]
     public int Discount { get; set; }

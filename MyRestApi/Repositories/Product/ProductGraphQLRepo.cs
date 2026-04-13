@@ -127,7 +127,7 @@ public class ProductRepo : IProductRepo
             data.GetProperty("createProduct").GetRawText(), _readOptions)!;
     }
 
-    public async Task<Product?> UpdateAsync(int id, ProductUpdateDto req)
+    public async Task<Product?> UpdateAsync(int productId, ProductUpdateDto req)
     {
         const string mutation = """
             mutation($id: Int!, $input: ProductInput!) {
@@ -149,9 +149,9 @@ public class ProductRepo : IProductRepo
 
         var data = await SendAsync(mutation, new
         {
+            id = productId,
             input = new
             {
-                id,
                 req.Name,
                 req.Description,
                 req.Price,
@@ -160,8 +160,7 @@ public class ProductRepo : IProductRepo
                 req.Discount,
                 req.Available,
                 req.Brand,
-                req.Category,
-                Rating = 0.0
+                req.Category
             }
         });
         return JsonSerializer.Deserialize<Product>(

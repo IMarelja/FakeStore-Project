@@ -51,8 +51,8 @@ public class Mutation
             Name = input.Name,
             Description = input.Description,
             Price = input.Price,
-            Unit = input.Unit,
-            Image = input.Image,
+            Unit = input.Unit ?? string.Empty,
+            Image = input.Image ?? string.Empty,
             Discount = input.Discount,
             Available = input.Available,
             Brand = input.Brand,
@@ -74,8 +74,8 @@ public class Mutation
         product.Name = input.Name;
         product.Description = input.Description;
         product.Price = input.Price;
-        product.Unit = input.Unit;
-        product.Image = input.Image;
+        product.Unit = input.Unit ?? product.Unit;
+        product.Image = input.Image ?? product.Image;
         product.Discount = input.Discount;
         product.Available = input.Available;
         product.Brand = input.Brand;
