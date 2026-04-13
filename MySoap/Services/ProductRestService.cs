@@ -41,4 +41,9 @@ public class ProductRestService : IProductRestService
     {
         throw new NotImplementedException();
     }
+
+    public Task<bool> VerifyXmlFile()
+    {
+        throw new NotImplementedException();
+    }
 }

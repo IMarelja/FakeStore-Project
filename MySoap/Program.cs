@@ -5,7 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSoapCore();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IProductSoapService, ProductSoapService>();
+builder.Services.AddSingleton<IProductRestService, ProductRestService>();
+builder.Services.AddSingleton<IProductSoapService, ProductSoapService>();
 
 var app = builder.Build();
 
