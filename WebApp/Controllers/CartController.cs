@@ -203,7 +203,7 @@ public class CartController : Controller
             });
 
             await _cartService.deleteOwnCart();
-            SetHomeFeedback($"Order #{created.OrderId} placed successfully.", isError: false);
+            SetHomeFeedback($"Order #{created.OrderId}, Status: {created.Status}, Message: {created.Message}", isError: false);
         }
         catch (Exception ex)
         {
