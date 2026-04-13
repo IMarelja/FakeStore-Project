@@ -4,6 +4,9 @@ namespace FakeStore.ViewModel;
 
 public class ItemCartRead
 {
+    [JsonPropertyName("cart_item_id")]
+    public int cart_item_id { get; set; }
+
     [JsonPropertyName("product_id")]
     public int product_id { get; set; }
 
