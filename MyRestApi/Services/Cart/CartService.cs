@@ -51,6 +51,7 @@ public class CartService(ICartRepo repo) : ICartService
         user_id = c.UserId,
         items   = c.Items.Select(i => new CartItemReadDto
         {
+            cart_item_id = i.CartItemId,
             product_id = i.ProductId,
             quantity   = i.Quantity
         }).ToList()

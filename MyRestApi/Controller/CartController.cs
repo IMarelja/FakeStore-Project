@@ -75,43 +75,22 @@ public class CartController : ControllerBase
             ? NoContent() : NotFound();
     }
 
-    /*
-    // POST /api/cart/{id}/item
-    [HttpPost("{id:int}/item")]
+    // DELETE /api/cart/me
+    [HttpDelete("me")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartReadDto>> AddItemToCart(int id, [FromBody] CartItemAddDto req)
-    {
-        var cart = await _service.AddItemAsync(id, req);
-        return cart is null ? NotFound() : CreatedAtAction(nameof(GetById), new { id }, cart);
-    }
-
-    // PUT /api/cart/{id}/item
-    [HttpPut("{id:int}/item")]
-    [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartReadDto>> EditItemToCart(int id, [FromQuery] int product_id, [FromBody] CartItemEditDto req)
-    {
-        var cart = await _service.EditItemAsync(id, req);
-        return cart is null ? NotFound() : Ok(cart);
-    }
-
-    // DELETE /api/cart/{id}/item
-    [HttpDelete("{id:int}/item")]
-    [Authorize(Roles = "full access")]
-    public async Task<IActionResult> DeleteItemToCart(int id, [FromQuery] int product_id)
-    {
-        return await _service.RemoveItemByUserAndProductAsync(_claims.GetUserId(), product_id)
-            ? NoContent() : NotFound();
-    }
-
-    // DELETE /api/cart
-    [HttpDelete]
-    [Authorize(Roles = "full access")]
-    public async Task<IActionResult> DeleteCart()
+    public async Task<IActionResult> DeleteOwnCart()
     {
         var own = await _service.GetByUserIdAsync(_claims.GetUserId());
         if (own is null) return NotFound();
 
         return await _service.DeleteCartAsync(own.cart_id) ? NoContent() : NotFound();
     }
-    */
+
+    // DELETE /api/cart/{id}
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "full access")]
+    public async Task<IActionResult> DeleteCart(int id)
+    {
+        return await _service.DeleteCartAsync(id) ? NoContent() : NotFound();
+    }
 }

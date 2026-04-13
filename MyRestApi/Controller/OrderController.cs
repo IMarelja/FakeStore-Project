@@ -11,10 +11,12 @@ namespace MyRestApi.Controller;
 public class OrdersController : ControllerBase
 {
     private readonly IOrderService _service;
+    private readonly IClaimsService _claims;
 
-    public OrdersController(IOrderService service)
+    public OrdersController(IOrderService service, IClaimsService claims)
     {
         _service = service;
+        _claims = claims;
     }
 
     // GET /api/orders
@@ -23,6 +25,16 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<IEnumerable<OrderReadDto>>> GetAll()
     {
         return Ok(await _service.GetAllAsync());
+    }
+
+    // GET /api/orders/me
+    [HttpGet("me")]
+    [Authorize(Roles = "read-only,full access")]
+    public async Task<ActionResult<IEnumerable<OrderReadDto>>> GetOwn()
+    {
+        var userId = _claims.GetUserId();
+        var allOrders = await _service.GetAllAsync();
+        return Ok(allOrders.Where(order => order.user_id == userId));
     }
 
     // GET /api/orders/status?order_id={order_id}
