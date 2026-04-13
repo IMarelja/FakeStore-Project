@@ -100,19 +100,52 @@ else
                 </div>
                 @if (Model.HasFullAccessRole)
                 {
-                    <div class="card-footer d-flex justify-content-end gap-2">
-                        <a class="btn btn-sm btn-outline-primary"
-                           asp-controller="Product"
-                           asp-action="Edit"
-                           asp-route-id="@product.product_id">
-                            Edit
-                        </a>
-                        <a class="btn btn-sm btn-outline-danger"
-                           asp-controller="Product"
-                           asp-action="Delete"
-                           asp-route-id="@product.product_id">
-                            Delete
-                        </a>
+                    <div class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
+                        @if (Model.HasFullAccessRole)
+                        {
+                            <form asp-controller="Cart"
+                                  asp-action="AddItemToOwnCart"
+                                  method="post"
+                                  class="d-flex align-items-center gap-2 flex-wrap">
+                                <input type="hidden" name="productId" value="@product.product_id" />
+                                <label for="product-qty-@product.product_id" class="small text-muted mb-0">Qty</label>
+                                <input id="product-qty-@product.product_id"
+                                       type="number"
+                                       class="form-control form-control-sm"
+                                       style="width: 90px;"
+                                       name="quantity"
+                                       value="1"
+                                       min="1"
+                                       step="1"
+                                       required />
+                                @if (product.availability)
+                                {
+                                    <button type="submit" class="btn btn-sm btn-success">Add to cart</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-sm btn-secondary" disabled>Add to cart</button>
+                                }
+                            </form>
+                        }
+
+                        @if (Model.HasFullAccessRole)
+                        {
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-controller="Product"
+                                   asp-action="Edit"
+                                   asp-route-id="@product.product_id">
+                                    Edit
+                                </a>
+                                <a class="btn btn-sm btn-outline-danger"
+                                   asp-controller="Product"
+                                   asp-action="Delete"
+                                   asp-route-id="@product.product_id">
+                                    Delete
+                                </a>
+                            </div>
+                        }
                     </div>
                 }
             </div>

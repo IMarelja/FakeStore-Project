@@ -1,0 +1,14 @@
+﻿@using System
+@model FakeStore.WebApp.Models.HomePageViewModel
+@{
+    var isActive = string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase);
+}
+
+<div class="tab-pane fade @(isActive ? "show active" : string.Empty)" id="orders-pane" role="tabpanel" aria-labelledby="orders-tab">
+    <div id="orders-loading" class="home-tab-loading d-none">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mb-0 mt-2 text-muted">Loading orders...</p>
+    </div>
+    <div id="orders-error" class="alert alert-danger d-none mt-3 mb-0"></div>
+    <div id="orders-list" class="row g-3 mt-1"></div>
+</div>

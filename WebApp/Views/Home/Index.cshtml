@@ -1,8 +1,13 @@
-﻿@model FakeStore.WebApp.Models.HomePageViewModel
+﻿@using System
+@model FakeStore.WebApp.Models.HomePageViewModel
 @{
     ViewData["Title"] = "Home";
     var usersDataUrl = Url.Action("TabData", "User") ?? string.Empty;
     var productsDataUrl = Url.Action("TabData", "Product") ?? string.Empty;
+    var cartsDataUrl = Model.ShowCartTab ? (Url.Action("TabData", "Cart") ?? string.Empty) : string.Empty;
+    var ordersDataUrl = Model.ShowOrdersTab ? (Url.Action("TabData", "Order") ?? string.Empty) : string.Empty;
+    var homeFeedbackMessage = TempData["HomeFeedbackMessage"]?.ToString();
+    var homeFeedbackIsError = string.Equals(TempData["HomeFeedbackIsError"]?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
 }
 
 @if (!Model.ShowTabScreen)
@@ -17,9 +22,19 @@
 }
 else
 {
+    @if (!string.IsNullOrWhiteSpace(homeFeedbackMessage))
+    {
+        <div class="alert @(homeFeedbackIsError ? "alert-danger" : "alert-success")" role="alert">
+            @homeFeedbackMessage
+        </div>
+    }
+
     <div id="home-tab-screen"
          data-users-url="@usersDataUrl"
-         data-products-url="@productsDataUrl">
+         data-products-url="@productsDataUrl"
+         data-carts-url="@cartsDataUrl"
+         data-orders-url="@ordersDataUrl"
+         data-active-tab="@Model.ActiveTab">
         <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
             <h1 class="h3 mb-0">The tab screen</h1>
             <span class="badge @(Model.IsCustomApi ? "text-bg-dark" : "text-bg-secondary")">
@@ -29,36 +44,76 @@ else
 
         <ul class="nav nav-tabs" id="homeTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active"
+                <button class="nav-link @(string.Equals(Model.ActiveTab, "products", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
                         id="products-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#products-pane"
                         type="button"
                         role="tab"
                         aria-controls="products-pane"
-                        aria-selected="true"
+                        aria-selected="@(string.Equals(Model.ActiveTab, "products", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
                         data-tab-key="products">
                     Product
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link"
+                <button class="nav-link @(string.Equals(Model.ActiveTab, "users", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
                         id="users-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#users-pane"
                         type="button"
                         role="tab"
                         aria-controls="users-pane"
-                        aria-selected="false"
+                        aria-selected="@(string.Equals(Model.ActiveTab, "users", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
                         data-tab-key="users">
                     User
                 </button>
             </li>
+            @if (Model.ShowCartTab)
+            {
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link @(string.Equals(Model.ActiveTab, "cart", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
+                            id="carts-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#carts-pane"
+                            type="button"
+                            role="tab"
+                            aria-controls="carts-pane"
+                            aria-selected="@(string.Equals(Model.ActiveTab, "cart", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                            data-tab-key="carts">
+                        Cart
+                    </button>
+                </li>
+            }
+            @if (Model.ShowOrdersTab)
+            {
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link @(string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
+                            id="orders-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#orders-pane"
+                            type="button"
+                            role="tab"
+                            aria-controls="orders-pane"
+                            aria-selected="@(string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                            data-tab-key="orders">
+                        Orders
+                    </button>
+                </li>
+            }
         </ul>
 
         <div class="tab-content border border-top-0 rounded-bottom p-3 bg-body-tertiary" id="homeTabsContent">
             @await Html.PartialAsync("_ProductsTab", Model)
             @await Html.PartialAsync("_UsersTab", Model)
+            @if (Model.ShowCartTab)
+            {
+                @await Html.PartialAsync("_CartsTab", Model)
+            }
+            @if (Model.ShowOrdersTab)
+            {
+                @await Html.PartialAsync("_OrdersTab", Model)
+            }
         </div>
     </div>
 }
@@ -71,18 +126,39 @@ else
                 return;
             }
 
-            const tabs = {
-                products: {
+            const tabs = {};
+
+            if (root.dataset.productsUrl) {
+                tabs.products = {
                     url: root.dataset.productsUrl,
                     loaded: false,
                     loading: false
-                },
-                users: {
+                };
+            }
+
+            if (root.dataset.usersUrl) {
+                tabs.users = {
                     url: root.dataset.usersUrl,
                     loaded: false,
                     loading: false
-                }
-            };
+                };
+            }
+
+            if (root.dataset.cartsUrl) {
+                tabs.carts = {
+                    url: root.dataset.cartsUrl,
+                    loaded: false,
+                    loading: false
+                };
+            }
+
+            if (root.dataset.ordersUrl) {
+                tabs.orders = {
+                    url: root.dataset.ordersUrl,
+                    loaded: false,
+                    loading: false
+                };
+            }
 
             function getElement(tabKey, suffix) {
                 return document.getElementById(`${tabKey}-${suffix}`);
@@ -157,11 +233,34 @@ else
                     const tabKey = event.target?.dataset?.tabKey;
                     if (tabKey) {
                         fetchTabData(tabKey);
+
+                        const url = new URL(window.location.href);
+                        const normalized = tabKey === 'carts' ? 'cart' : tabKey;
+                        url.searchParams.set('tab', normalized);
+                        window.history.replaceState({}, '', url);
                     }
                 });
             });
 
-            fetchTabData('products');
+            const initialTabKey = root.dataset.activeTab === 'cart'
+                ? 'carts'
+                : (root.dataset.activeTab || 'products');
+
+            const initialButton = document.querySelector(`#homeTabs button[data-tab-key="${initialTabKey}"]`);
+            if (initialButton) {
+                bootstrap.Tab.getOrCreateInstance(initialButton).show();
+            }
+
+            if (tabs[initialTabKey]) {
+                fetchTabData(initialTabKey);
+            } else if (tabs.products) {
+                fetchTabData('products');
+            } else {
+                const firstKey = Object.keys(tabs)[0];
+                if (firstKey) {
+                    fetchTabData(firstKey);
+                }
+            }
         })();
     </script>
 }

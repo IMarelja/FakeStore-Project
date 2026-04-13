@@ -1,0 +1,118 @@
+﻿@using System.Linq
+@model FakeStore.WebApp.Models.CartTabCardsViewModel
+
+@if (Model.Carts is null || !Model.Carts.Any())
+{
+    <div class="col-12">
+        <div class="alert alert-secondary mb-0">No carts found.</div>
+    </div>
+}
+else
+{
+    @foreach (var cart in Model.Carts)
+    {
+        var isOwnCart = Model.CurrentUserId.HasValue && Model.CurrentUserId.Value == cart.user_id;
+        var showFooterActions = Model.HasFullAccessRole;
+
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Cart #@cart.cart_id (User #@cart.user_id)</span>
+                    @if (isOwnCart)
+                    {
+                        <span class="badge text-bg-primary">Your cart</span>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (cart.items is null || !cart.items.Any())
+                    {
+                        <p class="mb-0 text-muted">No items in this cart.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Product</th>
+                                        <th scope="col">Quantity</th>
+                                        @if (isOwnCart && Model.HasFullAccessRole)
+                                        {
+                                            <th scope="col">Actions</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in cart.items)
+                                    {
+                                        <tr>
+                                            <td>#@item.product_id</td>
+                                            <td>
+                                                @if (isOwnCart && Model.HasFullAccessRole)
+                                                {
+                                                    <form asp-controller="Cart"
+                                                          asp-action="UpdateOwnItemQuantity"
+                                                          method="post"
+                                                          class="d-flex align-items-center gap-2">
+                                                        <input type="hidden" name="cartItemId" value="@item.cart_item_id" />
+                                                        <input type="number"
+                                                               class="form-control form-control-sm"
+                                                               style="width: 90px;"
+                                                               name="quantity"
+                                                               value="@item.quantity"
+                                                               min="1"
+                                                               step="1"
+                                                               required />
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary">Change</button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    @item.quantity
+                                                }
+                                            </td>
+                                            @if (isOwnCart && Model.HasFullAccessRole)
+                                            {
+                                                <td>
+                                                    <form asp-controller="Cart"
+                                                          asp-action="DeleteOwnItem"
+                                                          method="post"
+                                                          class="d-inline">
+                                                        <input type="hidden" name="productId" value="@item.product_id" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete item</button>
+                                                    </form>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+                @if (showFooterActions)
+                {
+                    <div class="card-footer d-flex flex-wrap justify-content-end gap-2">
+                        @if (isOwnCart && Model.HasFullAccessRole)
+                        {
+                            <form asp-controller="Cart" asp-action="PlaceOwnOrder" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Place order</button>
+                            </form>
+                            <form asp-controller="Cart" asp-action="WipeOwnCart" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-warning">Wipe own cart</button>
+                            </form>
+                        }
+
+                        @if (Model.HasFullAccessRole && !isOwnCart)
+                        {
+                            <form asp-controller="Cart" asp-action="DeleteCart" method="post" class="d-inline">
+                                <input type="hidden" name="cartId" value="@cart.cart_id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete cart</button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

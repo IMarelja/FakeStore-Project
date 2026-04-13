@@ -16,9 +16,9 @@ public class HomeController : Controller
         _apiRuntimeMode = apiRuntimeMode;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(string? tab = null)
     {
-        var vm = BuildHomePageViewModel();
+        var vm = BuildHomePageViewModel(tab);
 
         if (!vm.ShowTabScreen)
         {
@@ -45,21 +45,39 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-    private HomePageViewModel BuildHomePageViewModel()
+    private HomePageViewModel BuildHomePageViewModel(string? requestedTab)
     {
         var isPublicApi = _apiRuntimeMode.IsPublicMode;
         var isCustomApi = _apiRuntimeMode.IsCustomMode;
         var isSignedIn = User?.Identity?.IsAuthenticated ?? false;
         var hasFullAccessRole = User?.Claims.Any(c =>
             c.Type == ClaimTypes.Role && c.Value.Equals("full access", StringComparison.OrdinalIgnoreCase)) ?? false;
+        var normalizedTab = NormalizeTabKey(requestedTab);
 
         return new HomePageViewModel
         {
             IsPublicApi = isPublicApi,
             IsCustomApi = isCustomApi,
             IsSignedIn = isSignedIn,
-            HasFullAccessRole = hasFullAccessRole
+            HasFullAccessRole = hasFullAccessRole,
+            ActiveTab = normalizedTab
         };
     }
 
+    private static string NormalizeTabKey(string? tab)
+    {
+        if (string.IsNullOrWhiteSpace(tab))
+        {
+            return "products";
+        }
+
+        return tab.Trim().ToLowerInvariant() switch
+        {
+            "products" => "products",
+            "users" => "users",
+            "cart" => "cart",
+            "orders" => "orders",
+            _ => "products"
+        };
+    }
 }

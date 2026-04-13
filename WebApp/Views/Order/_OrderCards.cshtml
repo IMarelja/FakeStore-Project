@@ -1,0 +1,58 @@
+﻿@using System.Linq
+@model IEnumerable<FakeStore.ViewModel.OrderRead>
+
+@if (Model is null || !Model.Any())
+{
+    <div class="col-12">
+        <div class="alert alert-secondary mb-0">No orders found for your account.</div>
+    </div>
+}
+else
+{
+    @foreach (var order in Model)
+    {
+        var orderItems = order.items ?? [];
+
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Order #@order.order_id</span>
+                    <span class="badge text-bg-secondary">@order.status</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-4">
+                            <p class="text-muted small mb-1">User Id</p>
+                            <p class="mb-0 fw-semibold">@order.user_id</p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="text-muted small mb-1">Total Price</p>
+                            <p class="mb-0 fw-semibold">@order.total_price</p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="text-muted small mb-1">Items</p>
+                            <p class="mb-0 fw-semibold">@orderItems.Count</p>
+                        </div>
+                    </div>
+
+                    @if (orderItems.Count == 0)
+                    {
+                        <p class="mb-0 text-muted">No items found in this order.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in orderItems)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>Product #@item.product_id</span>
+                                    <span class="badge text-bg-light border">Qty: @item.quantity</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}

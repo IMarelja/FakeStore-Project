@@ -1,8 +1,10 @@
-﻿@model FakeStore.WebApp.Models.HomePageViewModel
+﻿@using System
+@model FakeStore.WebApp.Models.HomePageViewModel
+@{
+    var isActive = string.Equals(Model.ActiveTab, "products", StringComparison.OrdinalIgnoreCase);
+}
 
-
-<!-- Setting default set "show active" or undefault by removing it -->
-<div class="tab-pane fade show active" id="products-pane" role="tabpanel" aria-labelledby="products-tab">
+<div class="tab-pane fade @(isActive ? "show active" : string.Empty)" id="products-pane" role="tabpanel" aria-labelledby="products-tab">
     @if (Model.HasFullAccessRole)
     {
         <div class="d-flex justify-content-end mb-3">

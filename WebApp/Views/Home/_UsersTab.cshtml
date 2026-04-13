@@ -1,6 +1,10 @@
-﻿@model FakeStore.WebApp.Models.HomePageViewModel
+﻿@using System
+@model FakeStore.WebApp.Models.HomePageViewModel
+@{
+    var isActive = string.Equals(Model.ActiveTab, "users", StringComparison.OrdinalIgnoreCase);
+}
 
-<div class="tab-pane fade" id="users-pane" role="tabpanel" aria-labelledby="users-tab">
+<div class="tab-pane fade @(isActive ? "show active" : string.Empty)" id="users-pane" role="tabpanel" aria-labelledby="users-tab">
     @if (Model.HasFullAccessRole)
     {
         <div class="d-flex justify-content-end mb-3">

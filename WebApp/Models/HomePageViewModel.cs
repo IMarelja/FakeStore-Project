@@ -6,7 +6,10 @@ public class HomePageViewModel
     public bool IsCustomApi { get; set; }
     public bool IsSignedIn { get; set; }
     public bool HasFullAccessRole { get; set; }
+    public string ActiveTab { get; set; } = "products";
     public string Message { get; set; } = string.Empty;
 
     public bool ShowTabScreen => IsPublicApi || (IsCustomApi && IsSignedIn);
+    public bool ShowCartTab => IsPublicApi || (IsCustomApi && IsSignedIn);
+    public bool ShowOrdersTab => IsCustomApi && IsSignedIn;
 }
