@@ -10,6 +10,4 @@ public class HomePageViewModel
     public string Message { get; set; } = string.Empty;
 
     public bool ShowTabScreen => IsPublicApi || (IsCustomApi && IsSignedIn);
-    public bool ShowCartTab => IsPublicApi || (IsCustomApi && IsSignedIn);
-    public bool ShowOrdersTab => IsCustomApi && IsSignedIn;
 }

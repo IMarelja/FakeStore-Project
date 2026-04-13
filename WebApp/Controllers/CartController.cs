@@ -50,9 +50,11 @@ public class CartController : Controller
 
             return PartialView("_CartCards", vm);
         }
-        catch
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Could not load carts.");
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                BuildErrorMessage("Could not load carts.", ex));
         }
     }
 

@@ -4,8 +4,8 @@
     ViewData["Title"] = "Home";
     var usersDataUrl = Url.Action("TabData", "User") ?? string.Empty;
     var productsDataUrl = Url.Action("TabData", "Product") ?? string.Empty;
-    var cartsDataUrl = Model.ShowCartTab ? (Url.Action("TabData", "Cart") ?? string.Empty) : string.Empty;
-    var ordersDataUrl = Model.ShowOrdersTab ? (Url.Action("TabData", "Order") ?? string.Empty) : string.Empty;
+    var cartsDataUrl = Url.Action("TabData", "Cart") ?? string.Empty;
+    var ordersDataUrl = Url.Action("TabData", "Order") ?? string.Empty;
     var homeFeedbackMessage = TempData["HomeFeedbackMessage"]?.ToString();
     var homeFeedbackIsError = string.Equals(TempData["HomeFeedbackIsError"]?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
 }
@@ -69,51 +69,39 @@ else
                     User
                 </button>
             </li>
-            @if (Model.ShowCartTab)
-            {
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link @(string.Equals(Model.ActiveTab, "cart", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
-                            id="carts-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#carts-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="carts-pane"
-                            aria-selected="@(string.Equals(Model.ActiveTab, "cart", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
-                            data-tab-key="carts">
-                        Cart
-                    </button>
-                </li>
-            }
-            @if (Model.ShowOrdersTab)
-            {
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link @(string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
-                            id="orders-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#orders-pane"
-                            type="button"
-                            role="tab"
-                            aria-controls="orders-pane"
-                            aria-selected="@(string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
-                            data-tab-key="orders">
-                        Orders
-                    </button>
-                </li>
-            }
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(string.Equals(Model.ActiveTab, "cart", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
+                        id="carts-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#carts-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="carts-pane"
+                        aria-selected="@(string.Equals(Model.ActiveTab, "cart", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                        data-tab-key="carts">
+                    Cart
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link @(string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty)"
+                        id="orders-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#orders-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="orders-pane"
+                        aria-selected="@(string.Equals(Model.ActiveTab, "orders", StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                        data-tab-key="orders">
+                    Orders
+                </button>
+            </li>
         </ul>
 
         <div class="tab-content border border-top-0 rounded-bottom p-3 bg-body-tertiary" id="homeTabsContent">
             @await Html.PartialAsync("_ProductsTab", Model)
             @await Html.PartialAsync("_UsersTab", Model)
-            @if (Model.ShowCartTab)
-            {
-                @await Html.PartialAsync("_CartsTab", Model)
-            }
-            @if (Model.ShowOrdersTab)
-            {
-                @await Html.PartialAsync("_OrdersTab", Model)
-            }
+            @await Html.PartialAsync("_CartsTab", Model)
+            @await Html.PartialAsync("_OrdersTab", Model)
         </div>
     </div>
 }

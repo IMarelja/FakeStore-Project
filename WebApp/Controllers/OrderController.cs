@@ -46,9 +46,11 @@ public class OrderController : Controller
 
             return PartialView("_OrderCards", vm);
         }
-        catch
+        catch (Exception ex)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, "Could not load orders.");
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                BuildErrorMessage("Could not load orders.", ex));
         }
     }
 
