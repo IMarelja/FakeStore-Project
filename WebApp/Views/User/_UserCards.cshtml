@@ -38,18 +38,14 @@ else
                 {
                     <div class="card-footer d-flex justify-content-end gap-2">
                         <a class="btn btn-sm btn-outline-primary"
-                           asp-controller="Home"
-                           asp-action="ComingSoon"
-                           asp-route-itemType="User"
-                           asp-route-featureAction="Edit"
+                           asp-controller="User"
+                           asp-action="Edit"
                            asp-route-id="@user.user_id">
                             Edit
                         </a>
                         <a class="btn btn-sm btn-outline-danger"
-                           asp-controller="Home"
-                           asp-action="ComingSoon"
-                           asp-route-itemType="User"
-                           asp-route-featureAction="Delete"
+                           asp-controller="User"
+                           asp-action="Delete"
                            asp-route-id="@user.user_id">
                             Delete
                         </a>

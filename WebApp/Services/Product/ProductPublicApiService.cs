@@ -26,7 +26,7 @@ public class ProductPublicApiService : IProductService
         var result = await response.Content.ReadFromJsonAsync<IEnumerable<ProductRead>>();
         return result ?? [];
     }
-    public Task<ReviewProductRead> AddReview(ReviewProductCreate review)
+    public Task<ReviewProductRead> AddReview(int productId, ReviewProductCreate review)
     {
         throw new NotImplementedException();
     }
@@ -42,6 +42,11 @@ public class ProductPublicApiService : IProductService
     }
 
     public Task<ProductRead?> UpdateProduct(int id, ProductUpdate product)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteProduct(int id)
     {
         throw new NotImplementedException();
     }

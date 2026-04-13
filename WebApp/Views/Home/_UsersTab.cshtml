@@ -1,6 +1,17 @@
 ﻿@model FakeStore.WebApp.Models.HomePageViewModel
 
 <div class="tab-pane fade" id="users-pane" role="tabpanel" aria-labelledby="users-tab">
+    @if (Model.HasFullAccessRole)
+    {
+        <div class="d-flex justify-content-end mb-3">
+            <a class="btn btn-primary"
+               asp-controller="User"
+               asp-action="Create">
+                Add User
+            </a>
+        </div>
+    }
+
     <div id="users-loading" class="home-tab-loading d-none">
         <div class="spinner-border text-primary" role="status"></div>
         <p class="mb-0 mt-2 text-muted">Loading users...</p>

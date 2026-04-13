@@ -17,9 +17,20 @@ public class ProductCustomApiService : IProductService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Task<ReviewProductRead> AddReview(ReviewProductCreate review)
+    public async Task<ReviewProductRead> AddReview(int productId, ReviewProductCreate review)
     {
-        throw new InvalidOperationException("Product id is required for custom API review creation.");
+        var client = CreateAuthorizedClient();
+        var response = await client.PostAsJsonAsync($"product/{productId}/review", review);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var body = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException(
+                $"Create review failed ({(int)response.StatusCode} {response.ReasonPhrase}). {body}");
+        }
+
+        return await response.Content.ReadFromJsonAsync<ReviewProductRead>()
+            ?? throw new InvalidOperationException("Product API returned an empty review response.");
     }
 
     public async Task<ProductRead> CreateProduct(ProductCreate product)
@@ -88,6 +99,22 @@ public class ProductCustomApiService : IProductService
         }
 
         return await response.Content.ReadFromJsonAsync<ProductRead>();
+    }
+
+    public async Task<bool> DeleteProduct(int id)
+    {
+        var client = CreateAuthorizedClient();
+        var response = await client.DeleteAsync($"product/{id}");
+
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            return false;
+
+        if (response.IsSuccessStatusCode)
+            return true;
+
+        var body = await response.Content.ReadAsStringAsync();
+        throw new HttpRequestException(
+            $"Delete product failed ({(int)response.StatusCode} {response.ReasonPhrase}). {body}");
     }
 
     private HttpClient CreateAuthorizedClient()

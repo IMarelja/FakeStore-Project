@@ -1,0 +1,57 @@
+@model FakeStore.WebApp.Models.UserFormPageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <h1 class="h3 mb-3">@Model.Title</h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="alert alert-success" role="alert">@Model.SuccessMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-warning" role="alert">@Model.ErrorMessage</div>
+        }
+
+        <form asp-controller="User" asp-action="Edit" asp-route-id="@Model.UserId" method="post" class="card p-3 shadow-sm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <div class="mb-3">
+                <label asp-for="Form.Username" class="form-label"></label>
+                <input asp-for="Form.Username" class="form-control" autocomplete="username" />
+                <span asp-validation-for="Form.Username" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Form.Email" class="form-label"></label>
+                <input asp-for="Form.Email" type="email" class="form-control" autocomplete="email" />
+                <span asp-validation-for="Form.Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Form.Password" class="form-label"></label>
+                <input id="Form_Password"
+                       name="Form.Password"
+                       type="password"
+                       value="@Model.Form.Password"
+                       class="form-control"
+                       autocomplete="current-password" />
+                <span asp-validation-for="Form.Password" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2 mt-2">
+                <button type="submit" class="btn btn-primary">@Model.SubmitLabel</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

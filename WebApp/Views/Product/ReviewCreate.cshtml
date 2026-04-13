@@ -1,0 +1,79 @@
+@model FakeStore.WebApp.Models.ProductReviewPageViewModel
+@{
+    ViewData["Title"] = "Add Review";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <h1 class="h3 mb-3">Add Review</h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="alert alert-success" role="alert">@Model.SuccessMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-warning" role="alert">@Model.ErrorMessage</div>
+        }
+
+        @if (Model.Product is not null)
+        {
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">@Model.Product.name</h2>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-12 col-md-8">
+                            <p class="mb-1"><strong>ID:</strong> @Model.Product.product_id</p>
+                            <p class="mb-1"><strong>Category:</strong> @Model.Product.category</p>
+                            <p class="mb-1"><strong>Brand:</strong> @Model.Product.brand</p>
+                            <p class="mb-0"><strong>Current rating:</strong> @Model.Product.rating</p>
+                        </div>
+                        <div class="col-12 col-md-4 text-md-end">
+                            <img src="@Model.Product.image"
+                                 alt="@Model.Product.name"
+                                 class="img-fluid border rounded"
+                                 style="max-height: 140px; object-fit: contain;"
+                                 onerror="this.onerror=null;this.src='@Url.Content("~/images/image-not-found.jpg")';" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-controller="Product" asp-action="ReviewCreate" asp-route-id="@Model.Product.product_id" method="post" class="card p-3 shadow-sm">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                <label class="form-label d-block">Rating</label>
+                <div class="review-stars mb-3" role="group" aria-label="Review rating">
+                    @for (var star = 5; star >= 1; star--)
+                    {
+                        var radioId = $"rating-{star}";
+                        <input type="radio" id="@radioId" asp-for="Form.Rating" value="@star" />
+                        <label for="@radioId" title="@star stars">&#9733;</label>
+                    }
+                </div>
+                <span asp-validation-for="Form.Rating" class="text-danger"></span>
+
+                <div class="mb-3">
+                    <label asp-for="Form.Comment" class="form-label"></label>
+                    <textarea asp-for="Form.Comment" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Form.Comment" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Back</a>
+                </div>
+            </form>
+        }
+        else
+        {
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Back</a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

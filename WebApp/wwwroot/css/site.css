@@ -78,3 +78,30 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.review-stars {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  gap: 0.2rem;
+}
+
+.review-stars input {
+  position: absolute;
+  opacity: 0;
+}
+
+.review-stars label {
+  font-size: 1.8rem;
+  color: #c7c7c7;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.review-stars label:hover,
+.review-stars label:hover ~ label {
+  color: #f2b600;
+}
+
+.review-stars input:checked ~ label {
+  color: #f2b600;
+}

@@ -1,0 +1,129 @@
+@model FakeStore.WebApp.Models.ProductFormPageViewModel
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-9">
+        <h1 class="h3 mb-3">@Model.Title</h1>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+        {
+            <div class="alert alert-success" role="alert">@Model.SuccessMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-warning" role="alert">@Model.ErrorMessage</div>
+        }
+
+        <form asp-controller="Product" asp-action="Create" method="post" enctype="multipart/form-data" class="card p-3 shadow-sm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+            <div class="row g-3">
+                <div class="col-12 col-lg-6">
+                    <label asp-for="Form.Name" class="form-label"></label>
+                    <input asp-for="Form.Name" class="form-control" />
+                    <span asp-validation-for="Form.Name" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <label asp-for="Form.Price" class="form-label"></label>
+                    <input asp-for="Form.Price" type="number" step="0.01" min="0.01" class="form-control" />
+                    <span asp-validation-for="Form.Price" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-lg-3">
+                    <label asp-for="Form.Unit" class="form-label"></label>
+                    <input asp-for="Form.Unit" class="form-control" />
+                    <span asp-validation-for="Form.Unit" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Form.Description" class="form-label"></label>
+                    <textarea asp-for="Form.Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Form.Description" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <label asp-for="Form.Brand" class="form-label"></label>
+                    <input asp-for="Form.Brand" class="form-control" />
+                    <span asp-validation-for="Form.Brand" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <label asp-for="Form.Category" class="form-label"></label>
+                    <input asp-for="Form.Category" class="form-control" />
+                    <span asp-validation-for="Form.Category" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <label asp-for="Form.Discount" class="form-label"></label>
+                    <input asp-for="Form.Discount" type="number" min="0" max="100" class="form-control" />
+                    <span asp-validation-for="Form.Discount" class="text-danger"></span>
+                </div>
+                <div class="col-12 col-lg-6 d-flex align-items-end">
+                    <div class="form-check mb-2">
+                        <input asp-for="Form.Available" class="form-check-input" />
+                        <label asp-for="Form.Available" class="form-check-label"></label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Form.ImageUrl" class="form-label"></label>
+                    <input asp-for="Form.ImageUrl" id="productImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                    <span asp-validation-for="Form.ImageUrl" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Form.ImageFile" class="form-label"></label>
+                    <input asp-for="Form.ImageFile" id="productImageFile" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp" class="form-control" />
+                    <span asp-validation-for="Form.ImageFile" class="text-danger"></span>
+                    <div class="form-text">Choose either image URL or upload file. Upload takes priority.</div>
+                </div>
+                <div class="col-12">
+                    <p class="text-muted small mb-1">Image preview</p>
+                    <img id="productImagePreview" src="~/images/image-not-found.jpg" alt="Image preview" class="img-fluid border rounded" style="max-height: 240px; object-fit: contain;" />
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">@Model.SubmitLabel</button>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const urlInput = document.getElementById("productImageUrl");
+            const fileInput = document.getElementById("productImageFile");
+            const preview = document.getElementById("productImagePreview");
+            if (!urlInput || !fileInput || !preview) return;
+
+            const fallback = "@Url.Content("~/images/image-not-found.jpg")";
+            preview.addEventListener("error", () => {
+                preview.src = fallback;
+            });
+
+            const applyUrlPreview = () => {
+                const value = (urlInput.value || "").trim();
+                preview.src = value.length > 0 ? value : fallback;
+            };
+
+            urlInput.addEventListener("input", applyUrlPreview);
+
+            fileInput.addEventListener("change", () => {
+                const [file] = fileInput.files || [];
+                if (!file) {
+                    applyUrlPreview();
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                    preview.src = typeof reader.result === "string" ? reader.result : fallback;
+                };
+                reader.readAsDataURL(file);
+            });
+
+            applyUrlPreview();
+        })();
+    </script>
+}

@@ -88,10 +88,8 @@ else
                                 @if (Model.HasFullAccessRole)
                                 {
                                     <a class="btn btn-sm btn-primary mt-3"
-                                       asp-controller="Home"
-                                       asp-action="ComingSoon"
-                                       asp-route-itemType="Review"
-                                       asp-route-featureAction="Add"
+                                       asp-controller="Product"
+                                       asp-action="ReviewCreate"
                                        asp-route-id="@product.product_id">
                                         Add review
                                     </a>
@@ -104,18 +102,14 @@ else
                 {
                     <div class="card-footer d-flex justify-content-end gap-2">
                         <a class="btn btn-sm btn-outline-primary"
-                           asp-controller="Home"
-                           asp-action="ComingSoon"
-                           asp-route-itemType="Product"
-                           asp-route-featureAction="Edit"
+                           asp-controller="Product"
+                           asp-action="Edit"
                            asp-route-id="@product.product_id">
                             Edit
                         </a>
                         <a class="btn btn-sm btn-outline-danger"
-                           asp-controller="Home"
-                           asp-action="ComingSoon"
-                           asp-route-itemType="Product"
-                           asp-route-featureAction="Delete"
+                           asp-controller="Product"
+                           asp-action="Delete"
                            asp-route-id="@product.product_id">
                             Delete
                         </a>

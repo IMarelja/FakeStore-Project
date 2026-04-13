@@ -9,6 +9,7 @@ public interface IProductService
     Task<ProductRead?> GetById(int id);
     Task<ProductRead> CreateProduct(ProductCreate product);
     Task<ProductRead?> UpdateProduct(int id, ProductUpdate product);
-    Task<ReviewProductRead> AddReview(ReviewProductCreate review);
+    Task<bool> DeleteProduct(int id);
+    Task<ReviewProductRead> AddReview(int productId, ReviewProductCreate review);
 
 }
