@@ -18,7 +18,9 @@ else
     @foreach (var cart in Model.Carts)
     {
         var isOwnCart = Model.CurrentUserId.HasValue && Model.CurrentUserId.Value == cart.user_id;
-        var showFooterActions = Model.HasFullAccessRole;
+        var showWriteActions = Model.HasFullAccessRole && !Model.IsPublicApi;
+        var showPlaceOrderAction = isOwnCart && Model.HasFullAccessRole;
+        var showFooterActions = showPlaceOrderAction || showWriteActions;
 
         if (hasOwnCart && isOwnCart && !renderedOwnSectionHeader)
         {
@@ -60,7 +62,7 @@ else
                                     <tr>
                                         <th scope="col">Product</th>
                                         <th scope="col">Quantity</th>
-                                        @if (isOwnCart && Model.HasFullAccessRole)
+                                        @if (isOwnCart && showWriteActions)
                                         {
                                             <th scope="col">Actions</th>
                                         }
@@ -72,7 +74,7 @@ else
                                         <tr>
                                             <td>#@item.product_id</td>
                                             <td>
-                                                @if (isOwnCart && Model.HasFullAccessRole)
+                                                @if (isOwnCart && showWriteActions)
                                                 {
                                                     <form asp-controller="Cart"
                                                           asp-action="UpdateOwnItemQuantity"
@@ -95,7 +97,7 @@ else
                                                     @item.quantity
                                                 }
                                             </td>
-                                            @if (isOwnCart && Model.HasFullAccessRole)
+                                            @if (isOwnCart && showWriteActions)
                                             {
                                                 <td>
                                                     <form asp-controller="Cart"
@@ -117,17 +119,20 @@ else
                 @if (showFooterActions)
                 {
                     <div class="card-footer d-flex flex-wrap justify-content-end gap-2">
-                        @if (isOwnCart && Model.HasFullAccessRole)
+                        @if (showPlaceOrderAction)
                         {
                             <form asp-controller="Cart" asp-action="PlaceOwnOrder" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-success">Place order</button>
                             </form>
+                        }
+                        @if (isOwnCart && showWriteActions)
+                        {
                             <form asp-controller="Cart" asp-action="WipeOwnCart" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm btn-warning">Wipe own cart</button>
                             </form>
                         }
 
-                        @if (Model.HasFullAccessRole && !isOwnCart)
+                        @if (showWriteActions && !isOwnCart)
                         {
                             <form asp-controller="Cart" asp-action="DeleteCart" method="post" class="d-inline">
                                 <input type="hidden" name="cartId" value="@cart.cart_id" />

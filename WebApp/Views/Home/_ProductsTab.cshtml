@@ -5,7 +5,7 @@
 }
 
 <div class="tab-pane fade @(isActive ? "show active" : string.Empty)" id="products-pane" role="tabpanel" aria-labelledby="products-tab">
-    @if (Model.HasFullAccessRole)
+    @if (Model.HasFullAccessRole && !Model.IsPublicApi)
     {
         <div class="d-flex justify-content-end mb-3">
             <a class="btn btn-primary"

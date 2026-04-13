@@ -9,6 +9,8 @@
 }
 else
 {
+    var showWriteActions = Model.HasFullAccessRole && !Model.IsPublicApi;
+
     @foreach (var user in Model.Users)
     {
         <div class="col-12">
@@ -34,7 +36,7 @@ else
                         </div>
                     </div>
                 </div>
-                @if (Model.HasFullAccessRole)
+                @if (showWriteActions)
                 {
                     <div class="card-footer d-flex justify-content-end gap-2">
                         <a class="btn btn-sm btn-outline-primary"

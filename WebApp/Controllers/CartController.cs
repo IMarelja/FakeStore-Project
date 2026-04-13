@@ -30,10 +30,7 @@ public class CartController : Controller
     [HttpGet]
     public async Task<IActionResult> TabData()
     {
-        if (!CanAccessTabScreen())
-        {
-            return StatusCode(StatusCodes.Status403Forbidden, "You need to sign-up to view this page");
-        }
+
 
         try
         {
@@ -47,7 +44,8 @@ public class CartController : Controller
             {
                 Carts = orderedCarts,
                 CurrentUserId = currentUserId,
-                HasFullAccessRole = HasFullAccessRole()
+                HasFullAccessRole = HasFullAccessRole(),
+                IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
             return PartialView("_CartCards", vm);
@@ -244,12 +242,6 @@ public class CartController : Controller
     {
         TempData[HomeFeedbackMessageKey] = message;
         TempData[HomeFeedbackIsErrorKey] = isError;
-    }
-
-    private bool CanAccessTabScreen()
-    {
-        var isSignedIn = User?.Identity?.IsAuthenticated ?? false;
-        return _apiRuntimeMode.IsPublicMode || (_apiRuntimeMode.IsCustomMode && isSignedIn);
     }
 
     private bool HasFullAccessRole()

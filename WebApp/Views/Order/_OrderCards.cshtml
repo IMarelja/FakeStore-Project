@@ -9,6 +9,7 @@
 }
 else
 {
+    var showWriteActions = Model.HasFullAccessRole && !Model.IsPublicApi;
 
     @foreach (var order in Model.Orders)
     {
@@ -53,7 +54,7 @@ else
                         </ul>
                     }
                 </div>
-                @if (Model.HasFullAccessRole)
+                @if (showWriteActions)
                 {
                     <div class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
                         <form asp-controller="Order"

@@ -47,7 +47,8 @@ public class ProductController : Controller
             var vm = new ProductTabCardsViewModel
             {
                 Products = products,
-                HasFullAccessRole = HasFullAccessRole()
+                HasFullAccessRole = HasFullAccessRole(),
+                IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
             return PartialView("_ProductCards", vm);

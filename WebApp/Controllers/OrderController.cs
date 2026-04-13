@@ -1,3 +1,4 @@
+using FakeStore.WebApp.Configuration;
 using FakeStore.WebApp.Models;
 using FakeStore.WebApp.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +17,12 @@ public class OrderController : Controller
     private const string HomeFeedbackIsErrorKey = "HomeFeedbackIsError";
 
     private readonly IOrderService _orderService;
+    private readonly ApiRuntimeMode _apiRuntimeMode;
 
-    public OrderController(IOrderService orderService)
+    public OrderController(IOrderService orderService, ApiRuntimeMode apiRuntimeMode)
     {
         _orderService = orderService;
+        _apiRuntimeMode = apiRuntimeMode;
     }
 
     [HttpGet]
@@ -27,11 +30,8 @@ public class OrderController : Controller
     {
         try
         {
-            var hasFullAccessRole = HasFullAccessRole();
             var currentUserId = GetCurrentUserId();
-            var orders = hasFullAccessRole
-                ? await _orderService.GetAll()
-                : await _orderService.GetOwn();
+            var orders = await _orderService.GetAll();
 
             var sortedOrders = currentUserId.HasValue
                 ? orders.OrderBy(order => order.user_id == currentUserId.Value ? 0 : 1)
@@ -42,7 +42,8 @@ public class OrderController : Controller
             {
                 Orders = sortedOrders,
                 CurrentUserId = currentUserId,
-                HasFullAccessRole = hasFullAccessRole
+                HasFullAccessRole = HasFullAccessRole(),
+                IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
             return PartialView("_OrderCards", vm);

@@ -41,7 +41,8 @@ public class UserController : Controller
             var vm = new UserTabCardsViewModel
             {
                 Users = users,
-                HasFullAccessRole = HasFullAccessRole()
+                HasFullAccessRole = HasFullAccessRole(),
+                IsPublicApi = _apiRuntimeMode.IsPublicMode
             };
 
             return PartialView("_UserCards", vm);

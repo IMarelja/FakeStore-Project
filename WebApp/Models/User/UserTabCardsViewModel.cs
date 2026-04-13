@@ -6,4 +6,5 @@ public class UserTabCardsViewModel
 {
     public IEnumerable<UserRead> Users { get; set; } = [];
     public bool HasFullAccessRole { get; set; }
+    public bool IsPublicApi { get; set; }
 }

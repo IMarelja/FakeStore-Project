@@ -6,4 +6,5 @@ public class OrdersPageViewModel
 {
     public IEnumerable<OrderRead> Orders { get; set; } = [];
     public string? ErrorMessage { get; set; }
+    public bool IsPublicApi { get; set; }
 }

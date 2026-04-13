@@ -13,6 +13,8 @@ else
     {
         var fallbackImageSrc = Url.Content("~/images/image-not-found.jpg");
         var productImageSrc = string.IsNullOrWhiteSpace(product.image) ? fallbackImageSrc : product.image;
+        var showProductQuantityForm = Model.HasFullAccessRole;
+        var showWriteActions = Model.HasFullAccessRole && !Model.IsPublicApi;
 
         <div class="col-12">
             <div class="card shadow-sm">
@@ -85,7 +87,7 @@ else
                                         }
                                     }
                                 </div>
-                                @if (Model.HasFullAccessRole)
+                                @if (showWriteActions)
                                 {
                                     <a class="btn btn-sm btn-primary mt-3"
                                        asp-controller="Product"
@@ -98,10 +100,10 @@ else
                         </div>
                     </div>
                 </div>
-                @if (Model.HasFullAccessRole)
+                @if (showProductQuantityForm || showWriteActions)
                 {
                     <div class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2">
-                        @if (Model.HasFullAccessRole)
+                        @if (showProductQuantityForm)
                         {
                             <form asp-controller="Cart"
                                   asp-action="AddItemToOwnCart"
@@ -129,7 +131,7 @@ else
                             </form>
                         }
 
-                        @if (Model.HasFullAccessRole)
+                        @if (showWriteActions)
                         {
                             <div class="d-flex gap-2">
                                 <a class="btn btn-sm btn-outline-primary"

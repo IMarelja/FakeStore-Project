@@ -6,4 +6,5 @@ public class ProductTabCardsViewModel
 {
     public IEnumerable<ProductRead> Products { get; set; } = [];
     public bool HasFullAccessRole { get; set; }
+    public bool IsPublicApi { get; set; }
 }
