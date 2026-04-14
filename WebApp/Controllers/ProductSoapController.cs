@@ -15,9 +15,11 @@ public class ProductSoapController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View(new ProductSoapViewModel());
+        var vm = new ProductSoapViewModel();
+        await LoadResults(vm, string.Empty, null, null);
+        return View(vm);
     }
 
     [HttpPost]
@@ -36,12 +38,19 @@ public class ProductSoapController : Controller
             return View(vm);
         }
 
+        await LoadResults(vm, vm.searchedTerm.Trim(), vm.selectedMinPrice, vm.selectedMaxPrice);
+        return View(vm);
+    }
+
+    private async Task LoadResults(ProductSoapViewModel vm, string term, double? minPrice, double? maxPrice)
+    {
         try
         {
-            var result = await _service.Quary(vm.searchedTerm.Trim(), vm.selectedMinPrice, vm.selectedMaxPrice);
+            var result = await _service.Quary(term, minPrice, maxPrice);
             vm.searchResult = result ?? EmptySearchResult();
             vm.searchResult.Products ??= [];
             vm.found = true;
+            vm.errorMessage = null;
         }
         catch (Exception ex)
         {
@@ -49,8 +58,6 @@ public class ProductSoapController : Controller
             vm.errorMessage = $"Search failed. {ex.Message}";
             vm.searchResult = EmptySearchResult();
         }
-
-        return View(vm);
     }
 
     private static SearchResult EmptySearchResult() => new()
