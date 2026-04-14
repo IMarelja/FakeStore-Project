@@ -18,7 +18,7 @@ public class ProductSoapService(
 {
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-    private string XmlPath => Path.Combine(env.ContentRootPath, "products.xml");
+    private string XmlPath => Path.Combine(env.ContentRootPath, "XML", "products.xml");
     private string XsdPath => Path.Combine(env.ContentRootPath, "Schemas", "products.xsd");
 
     public Task<SearchResult> SearchProductsAsync(string? term, double? minPrice, double? maxPrice)
