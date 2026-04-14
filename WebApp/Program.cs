@@ -2,6 +2,8 @@ using FakeStore.WebApp.Configuration;
 using FakeStore.WebApp.Service;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
@@ -72,6 +74,41 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Login";
         options.AccessDeniedPath = "/Login";
         options.SlidingExpiration = true;
+        options.Events = new CookieAuthenticationEvents
+        {
+            OnValidatePrincipal = async context =>
+            {
+                var token = context.Principal?.FindFirstValue("access_token");
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    context.RejectPrincipal();
+                    await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(
+                        context.HttpContext,
+                        CookieAuthenticationDefaults.AuthenticationScheme);
+                    return;
+                }
+
+                try
+                {
+                    var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                    var hasExpired = jwt.ValidTo <= DateTime.UtcNow;
+
+                    if (!hasExpired)
+                    {
+                        return;
+                    }
+                }
+                catch
+                {
+                    // Invalid token format; treat as expired/invalid session.
+                }
+
+                context.RejectPrincipal();
+                await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.SignOutAsync(
+                    context.HttpContext,
+                    CookieAuthenticationDefaults.AuthenticationScheme);
+            }
+        };
     });
 
 if (isPublicMode)
