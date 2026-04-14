@@ -9,6 +9,6 @@ public class SoapProductService : ISoapProductService
 
         using var client = new ProductSoapServiceClient();
 
-        return await client.SearchProductsAsyncAsync(term, minPrice, maxPrice);
+        return await client.SearchProductsAsync(term, minPrice, maxPrice);
     }
 }

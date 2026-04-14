@@ -38,7 +38,7 @@ public class ProductSoapController : Controller
             return View(vm);
         }
 
-        await LoadResults(vm, vm.searchedTerm.Trim(), vm.selectedMinPrice, vm.selectedMaxPrice);
+        await LoadResults(vm, (vm.searchedTerm ?? string.Empty).Trim(), vm.selectedMinPrice, vm.selectedMaxPrice);
         return View(vm);
     }
 

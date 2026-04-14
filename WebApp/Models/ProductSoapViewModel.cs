@@ -5,7 +5,7 @@ namespace FakeStore.WebApp.Models;
 
 public class ProductSoapViewModel
 {
-    public string searchedTerm { get; set; } = string.Empty;
+    public string? searchedTerm { get; set; } = string.Empty;
 
     [Range(0, double.MaxValue, ErrorMessage = "Min price must be 0 or more.")]
     public double? selectedMinPrice { get; set; }

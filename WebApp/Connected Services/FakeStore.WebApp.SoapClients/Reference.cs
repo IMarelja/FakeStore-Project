@@ -166,8 +166,11 @@ namespace FakeStore.WebApp.SoapClients
     public interface IProductSoapService
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProductSoapService/SearchProductsAsync", ReplyAction="http://tempuri.org/IProductSoapService/SearchProductsAsyncResponse")]
-        System.Threading.Tasks.Task<FakeStore.WebApp.SoapClients.SearchResult> SearchProductsAsyncAsync(string term, System.Nullable<double> minPrice, System.Nullable<double> maxPrice);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProductSoapService/SearchProducts", ReplyAction="http://tempuri.org/IProductSoapService/SearchProductsResponse")]
+        FakeStore.WebApp.SoapClients.SearchResult SearchProducts(string term, System.Nullable<double> minPrice, System.Nullable<double> maxPrice);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IProductSoapService/SearchProducts", ReplyAction="http://tempuri.org/IProductSoapService/SearchProductsResponse")]
+        System.Threading.Tasks.Task<FakeStore.WebApp.SoapClients.SearchResult> SearchProductsAsync(string term, System.Nullable<double> minPrice, System.Nullable<double> maxPrice);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.Tools.ServiceModel.Svcutil", "8.0.0")]
@@ -220,9 +223,14 @@ namespace FakeStore.WebApp.SoapClients
         {
         }
         
-        public System.Threading.Tasks.Task<FakeStore.WebApp.SoapClients.SearchResult> SearchProductsAsyncAsync(string term, System.Nullable<double> minPrice, System.Nullable<double> maxPrice)
+        public FakeStore.WebApp.SoapClients.SearchResult SearchProducts(string term, System.Nullable<double> minPrice, System.Nullable<double> maxPrice)
         {
-            return base.Channel.SearchProductsAsyncAsync(term, minPrice, maxPrice);
+            return base.Channel.SearchProducts(term, minPrice, maxPrice);
+        }
+        
+        public System.Threading.Tasks.Task<FakeStore.WebApp.SoapClients.SearchResult> SearchProductsAsync(string term, System.Nullable<double> minPrice, System.Nullable<double> maxPrice)
+        {
+            return base.Channel.SearchProductsAsync(term, minPrice, maxPrice);
         }
         
         public virtual System.Threading.Tasks.Task OpenAsync()
