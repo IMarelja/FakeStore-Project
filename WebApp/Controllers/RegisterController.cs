@@ -1,11 +1,7 @@
 using FakeStore.ViewModel;
 using FakeStore.WebApp.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace FakeStore.WebApp.Controllers
 {
@@ -13,10 +9,12 @@ namespace FakeStore.WebApp.Controllers
     public class RegisterController : Controller
     {
         private readonly FakeStore.WebApp.Service.IAuthenticationService _service;
+        private readonly IJwtService _jwtService;
 
-        public RegisterController(FakeStore.WebApp.Service.IAuthenticationService service)
+        public RegisterController(FakeStore.WebApp.Service.IAuthenticationService service, IJwtService jwtService)
         {
             _service = service;
+            _jwtService = jwtService;
         }
 
         [HttpGet]
@@ -58,39 +56,7 @@ namespace FakeStore.WebApp.Controllers
                     return View(registerRequest);
                 }
 
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(authResponse.token);
-                var userId = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-                var email = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
-                var username = jwt.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.UniqueName)?.Value
-                    ?? registerRequest.username;
-                var roles = jwt.Claims
-                    .Where(c => c.Type == ClaimTypes.Role || c.Type == "role" || c.Type == "roles")
-                    .Select(c => c.Value)
-                    .Distinct()
-                    .ToList();
-
-                var claims = new List<Claim>
-                {
-                    new(ClaimTypes.Name, username),
-                    new("access_token", authResponse.token)
-                };
-
-                if (!string.IsNullOrWhiteSpace(userId))
-                {
-                    claims.Add(new Claim(ClaimTypes.NameIdentifier, userId));
-                }
-
-                claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = registerRequest.remember_me
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
-                    authProperties);
+                await _jwtService.StoreTokenAsync(authResponse.token, registerRequest.remember_me, registerRequest.username);
 
                 return RedirectToAction("Index", "Home");
             }

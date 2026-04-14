@@ -2,19 +2,18 @@ using FakeStore.ViewModel;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Security.Claims;
 
 namespace FakeStore.WebApp.Service;
 
 public class OrderCustomApiService : IOrderService
 {
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IJwtService _jwtService;
 
-    public OrderCustomApiService(IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor)
+    public OrderCustomApiService(IHttpClientFactory httpClientFactory, IJwtService jwtService)
     {
         _httpClientFactory = httpClientFactory;
-        _httpContextAccessor = httpContextAccessor;
+        _jwtService = jwtService;
     }
 
     public async Task<OrderCreateResponse> AddOrder(OrderCreate orderCreate)
@@ -142,7 +141,7 @@ public class OrderCustomApiService : IOrderService
 
     private HttpClient CreateAuthorizedClient()
     {
-        var token = _httpContextAccessor.HttpContext?.User.FindFirstValue("access_token");
+        var token = _jwtService.GetAccessToken();
         if (string.IsNullOrWhiteSpace(token))
             throw new InvalidOperationException("No access token found for current user session.");
 
