@@ -1,6 +1,4 @@
-using FakeStore.ViewModel;
 using FakeStore.WebApp.SoapClients;
-using System.Reflection;
 
 namespace FakeStore.WebApp.Service;
 
