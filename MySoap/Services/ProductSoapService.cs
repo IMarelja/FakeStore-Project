@@ -5,10 +5,16 @@ using MySoap.Models;
 
 namespace MySoap.Services;
 
-public class ProductSoapService(IWebHostEnvironment env) : IProductSoapService
+public class ProductSoapService : IProductSoapService
 {
-    private string XmlPath => Path.Combine(env.ContentRootPath, "XML", "products.xml");
-    private string XsdPath => Path.Combine(env.ContentRootPath, "Schemas", "products.xsd");
+    private IWebHostEnvironment webHost;
+    private string XmlPath => Path.Combine(webHost.ContentRootPath, "XML", "products.xml");
+    private string XsdPath => Path.Combine(webHost.ContentRootPath, "Schemas", "products.xsd");
+
+    public ProductSoapService(IWebHostEnvironment env)
+    {
+        webHost = env;
+    }
 
     public Task<SearchResult> SearchProductsAsync(string? term, double? minPrice, double? maxPrice)
     {
