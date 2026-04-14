@@ -16,7 +16,7 @@ public class ProductSoapService : IProductSoapService
         webHost = env;
     }
 
-    public Task<SearchResult> SearchProductsAsync(string? term, double? minPrice, double? maxPrice)
+    public Task<SearchResult> SearchProducts(string? term, double? minPrice, double? maxPrice)
     {
         var allProducts = ReadProductsFromXml();
         var normalizedTerm = term?.Trim();
