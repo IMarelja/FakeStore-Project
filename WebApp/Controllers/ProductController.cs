@@ -90,7 +90,7 @@ public class ProductController : Controller
         }
 
         var image = await ResolveImageSourceAsync(form);
-        if (image is null)
+        if (!ModelState.IsValid)
         {
             return View(vm);
         }
@@ -181,16 +181,13 @@ public class ProductController : Controller
             return View(vm);
         }
 
-        var image = await ResolveImageSourceAsync(form, existingProduct.image);
-        if (image is null)
+        var image = (await ResolveImageSourceAsync(form)) ?? existingProduct.image;
+        if (!ModelState.IsValid)
         {
             return View(vm);
         }
 
-        var previousStoredImage = IsStoredProductImage(existingProduct.image) ? existingProduct.image : null;
-        var newStoredImage = IsStoredProductImage(image) ? image : null;
-        var shouldDeletePreviousStoredImage = !string.IsNullOrWhiteSpace(previousStoredImage)
-            && !string.Equals(previousStoredImage, image, StringComparison.OrdinalIgnoreCase);
+        var imageChanged = !string.Equals(existingProduct.image, image, StringComparison.OrdinalIgnoreCase);
 
         try
         {
@@ -210,32 +207,22 @@ public class ProductController : Controller
 
             if (updated is null)
             {
-                if (!string.IsNullOrWhiteSpace(newStoredImage)
-                    && !string.Equals(newStoredImage, existingProduct.image, StringComparison.OrdinalIgnoreCase))
-                {
-                    TryDeleteStoredProductImage(newStoredImage);
-                }
+                if (imageChanged) 
+                    TryDeleteStoredProductImage(image);
 
                 vm.ErrorMessage = "Product not found.";
                 return View(vm);
             }
 
-            if (shouldDeletePreviousStoredImage)
-            {
-                TryDeleteStoredProductImage(previousStoredImage);
-            }
+            if (imageChanged) 
+                TryDeleteStoredProductImage(existingProduct.image);
 
             TempData[ProductEditSuccessKey] = "Product updated successfully.";
             return RedirectToAction(nameof(Edit), new { id });
         }
         catch (Exception ex)
         {
-            if (!string.IsNullOrWhiteSpace(newStoredImage)
-                && !string.Equals(newStoredImage, existingProduct.image, StringComparison.OrdinalIgnoreCase))
-            {
-                TryDeleteStoredProductImage(newStoredImage);
-            }
-
+            if (imageChanged) TryDeleteStoredProductImage(image);
             vm.ErrorMessage = _homeService.BuildHomeErrorMessage("Product update failed.", ex);
             return View(vm);
         }
@@ -422,7 +409,7 @@ public class ProductController : Controller
         };
     }
 
-    private async Task<string?> ResolveImageSourceAsync(ProductFormInputModel form, string? existingImage = null)
+    private async Task<string?> ResolveImageSourceAsync(ProductFormInputModel form)
     {
         if (form.ImageFile is not null && form.ImageFile.Length > 0)
         {
@@ -434,12 +421,6 @@ public class ProductController : Controller
             return form.ImageUrl.Trim();
         }
 
-        if (!string.IsNullOrWhiteSpace(existingImage))
-        {
-            return existingImage;
-        }
-
-        ModelState.AddModelError(nameof(ProductFormInputModel.ImageUrl), "Provide an image URL or upload an image file.");
         return null;
     }
 

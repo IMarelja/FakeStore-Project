@@ -12,7 +12,7 @@ public class Product
 
     public string Unit { get; set; } = string.Empty;
 
-    public string Image { get; set; } = string.Empty;
+    public string? Image { get; set; } = string.Empty;
 
     public int Discount { get; set; }
 

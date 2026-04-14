@@ -75,7 +75,7 @@ public class Mutation
         product.Description = input.Description;
         product.Price = input.Price;
         product.Unit = input.Unit ?? product.Unit;
-        product.Image = input.Image ?? product.Image;
+        product.Image = input.Image;
         product.Discount = input.Discount;
         product.Available = input.Available;
         product.Brand = input.Brand;
