@@ -1,8 +1,6 @@
 using FakeStore.ViewModel;
 using FakeStore.WebApp.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FakeStore.WebApp.Controllers
@@ -66,7 +64,7 @@ namespace FakeStore.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _jwtService.DeleteTokenAsync();
             return RedirectToAction("Index", "Home");
         }
     }

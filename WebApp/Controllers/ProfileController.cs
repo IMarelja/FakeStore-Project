@@ -2,8 +2,6 @@ using FakeStore.ViewModel;
 using FakeStore.WebApp.Models;
 using FakeStore.WebApp.Service;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FakeStore.WebApp.Controllers;
@@ -15,11 +13,13 @@ public class ProfileController : Controller
 {
     private readonly IUserService _userService;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IJwtService _jwtService;
 
-    public ProfileController(IUserService userService, IAuthorizationService authorizationService)
+    public ProfileController(IUserService userService, IAuthorizationService authorizationService, IJwtService jwtService)
     {
         _userService = userService;
         _authorizationService = authorizationService;
+        _jwtService = jwtService;
     }
 
     [HttpGet]
@@ -90,7 +90,7 @@ public class ProfileController : Controller
                 return View("Index", await BuildPageViewModel(errorMessage: "Profile could not be deleted."));
             }
 
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _jwtService.DeleteTokenAsync();
             return RedirectToAction("Index", "Home");
         }
         catch

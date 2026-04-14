@@ -69,6 +69,14 @@ public class JwtService : IJwtService
         return _httpContextAccessor.HttpContext?.User.FindFirstValue(AccessTokenClaimType);
     }
 
+    public async Task DeleteTokenAsync()
+    {
+        var httpContext = _httpContextAccessor.HttpContext
+            ?? throw new InvalidOperationException("No active HTTP context available.");
+
+        await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    }
+
     public int? GetCurrectUserId()
     {
         var userIdValue = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
