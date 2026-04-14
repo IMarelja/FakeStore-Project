@@ -11,8 +11,18 @@ var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
+
+
+// -----------------------------------------
+//  Needed required MVC services
+// -----------------------------------------
 builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+
+// -----------------------------------------
+//  Soap client for product
+// -----------------------------------------
+builder.Services.AddScoped<ISoapProductService, SoapProductService>();
 
 // -----------------------------------------
 //  Weather gRPC clinet

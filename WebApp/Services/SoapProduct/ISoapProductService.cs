@@ -1,8 +1,10 @@
 using FakeStore.ViewModel;
+using FakeStore.WebApp.SoapClients;
 
 namespace FakeStore.WebApp.Service;
 
 public interface ISoapProductService
 {
-    Task<List<ProductSoapRead>> Quary(ProductSoapQuary quary);
+    Task<SearchResult> Quary(string term, double? minPrice, double? maxPrice);
+    
 }
