@@ -13,8 +13,12 @@ var app = builder.Build();
 try
 {
     var restService = app.Services.GetRequiredService<IProductRestService>();
-    var products = await restService.GetAll();
-    await restService.ToXmlFile(products);
+
+    if(!await restService.VerifyXmlFile())
+    {
+        var products = await restService.GetAll();
+        await restService.ToXmlFile(products);
+    }
 }
 catch (Exception ex)
 {

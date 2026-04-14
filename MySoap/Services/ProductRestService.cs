@@ -3,6 +3,7 @@ using FakeStore.ViewModel;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using MySoap.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -79,7 +80,38 @@ public class ProductRestService : IProductRestService
 
     public Task<bool> VerifyXmlFile()
     {
-        throw new NotImplementedException();
+        var xmlPath = Path.Combine(_env.ContentRootPath, "XML", "products.xml");
+        var xsdPath = Path.Combine(_env.ContentRootPath, "Schemas", "products.xsd");
+
+        if (!File.Exists(xmlPath) || !File.Exists(xsdPath))
+            return Task.FromResult(false);
+
+        try
+        {
+            var isValid = true;
+            var settings = new XmlReaderSettings
+            {
+                ValidationType = ValidationType.Schema
+            };
+
+            settings.Schemas.Add(null, xsdPath);
+            settings.ValidationEventHandler += (_, _) => { isValid = false; };
+
+            using var reader = XmlReader.Create(xmlPath, settings);
+            while (reader.Read())
+            {
+            }
+
+            return Task.FromResult(isValid);
+        }
+        catch (XmlException)
+        {
+            return Task.FromResult(false);
+        }
+        catch (XmlSchemaValidationException)
+        {
+            return Task.FromResult(false);
+        }
     }
 
     private static ReadProductXml ToReadProductXml(ProductRead product)
