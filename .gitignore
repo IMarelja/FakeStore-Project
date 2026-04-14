@@ -4,7 +4,6 @@ obj/
 Document/
 
 .vs/
-.vscode/
 
 *.user
 *.suo

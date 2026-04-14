@@ -1,0 +1,173 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "name": "gRPC",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: gRPC",
+      "program": "${workspaceFolder}/gRPC/bin/Debug/net8.0/gRPC.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/gRPC",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5009"
+      }
+    },
+    {
+      "name": "WebApp (Public)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: WebApp",
+      "program": "${workspaceFolder}/WebApp/bin/Debug/net8.0/WebApp.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/WebApp",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ApiSelector__Selected": "Public"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/"
+      }
+    },
+    {
+      "name": "WebApp (Custom)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: WebApp",
+      "program": "${workspaceFolder}/WebApp/bin/Debug/net8.0/WebApp.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/WebApp",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ApiSelector__Selected": "Custom"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/"
+      }
+    },
+    {
+      "name": "MySoap",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/MySoap/bin/Debug/net8.0/MySoap.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/MySoap",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5123"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/ProductService.asmx?WSDL"
+      }
+    },
+    {
+      "name": "MySoap (No Browser)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/MySoap/bin/Debug/net8.0/MySoap.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/MySoap",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5123"
+      }
+    },
+    {
+      "name": "MyGraphQLApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: MyGraphQLApi",
+      "program": "${workspaceFolder}/MyGraphQLApi/bin/Debug/net8.0/MyGraphQLApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/MyGraphQLApi",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5046"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/graphql"
+      }
+    },
+    {
+      "name": "MyGraphQLApi (No UI)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: MyGraphQLApi",
+      "program": "${workspaceFolder}/MyGraphQLApi/bin/Debug/net8.0/MyGraphQLApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/MyGraphQLApi",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5046"
+      }
+    },
+    {
+      "name": "MyRestApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: MyRestApi",
+      "program": "${workspaceFolder}/MyRestApi/bin/Debug/net8.0/MyRestApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/MyRestApi",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5250"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger/index.html"
+      }
+    },
+    {
+      "name": "MyRestApi (No UI)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: MyRestApi",
+      "program": "${workspaceFolder}/MyRestApi/bin/Debug/net8.0/MyRestApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/MyRestApi",
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://localhost:5250"
+      }
+    },
+    {
+      "name": "DataSeeder",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build: DataSeeder",
+      "program": "${workspaceFolder}/DataSeeder/bin/Debug/net8.0/DataSeeder.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/DataSeeder",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Public: WebApp + gRPC + SOAP",
+      "configurations": ["WebApp (Public)", "gRPC", "MySoap (No Browser)"],
+      "stopAll": true
+    },
+    {
+      "name": "Custom: WebApp + gRPC + SOAP + MyRestApi + MyGraphQLApi",
+      "configurations": ["WebApp (Custom)", "gRPC", "MyRestApi (No UI)", "MyGraphQLApi (No UI)", "MySoap (No Browser)"],
+      "stopAll": true
+    },
+    {
+      "name": "MyGraphQLApi + MyRestApi",
+      "configurations": ["MyGraphQLApi", "MyRestApi"],
+      "stopAll": true
+    }
+  ]
+}

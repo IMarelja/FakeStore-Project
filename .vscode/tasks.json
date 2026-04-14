@@ -1,0 +1,60 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build: gRPC",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/gRPC/gRPC.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: WebApp",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/WebApp/WebApp.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: MyGraphQLApi",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/MyGraphQLApi/MyGraphQLApi.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: MyRestApi",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/MyRestApi/MyRestApi.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build: DataSeeder",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/DataSeeder/DataSeeder.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "open: Swagger UI",
+      "type": "shell",
+      "command": "xdg-open http://localhost:5250/swagger",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "open: Hot Chocolate GraphQL",
+      "type": "shell",
+      "command": "xdg-open http://localhost:5046/graphql",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
