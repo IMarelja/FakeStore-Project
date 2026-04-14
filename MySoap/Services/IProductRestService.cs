@@ -1,11 +1,12 @@
 using System.ServiceModel;
 using FakeStore.ViewModel;
+using MySoap.Models;
 
 namespace MySoap.Services;
 
 public interface IProductRestService
 {
-    Task<List<ProductRead>> GetAll();
+    Task<List<ReadProductXml>> GetAll();
     Task<bool> VerifyXmlFile();
-    Task ToXmlFile(List<ProductRead> products);
+    Task ToXmlFile(List<ReadProductXml> products);
 }

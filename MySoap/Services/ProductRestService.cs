@@ -1,6 +1,9 @@
 using System.Net.Http.Json;
 using FakeStore.ViewModel;
 using System.Xml.Serialization;
+using System.Linq;
+using System.Xml.Linq;
+using MySoap.Models;
 
 namespace MySoap.Services;
 
@@ -15,7 +18,7 @@ public class ProductRestService : IProductRestService
         _config = config;
     }
 
-    public async Task<List<ProductRead>> GetAll()
+    public async Task<List<ReadProductXml>> GetAll()
     {
         using var http = _httpFactory.CreateClient();
 
@@ -35,10 +38,14 @@ public class ProductRestService : IProductRestService
         }
 
         var products = await response.Content.ReadFromJsonAsync<List<ProductRead>>();
-        return products ?? [];
+
+        if(products == null || products.Count == 0)
+            return new List<ReadProductXml>();
+
+        return ToReadProductXml(products);
     }
 
-    public Task ToXmlFile(List<ProductRead> products)
+    public Task ToXmlFile(List<ReadProductXml> products)
     {
         throw new NotImplementedException();
     }
@@ -46,5 +53,50 @@ public class ProductRestService : IProductRestService
     public Task<bool> VerifyXmlFile()
     {
         throw new NotImplementedException();
+    }
+
+    private static ReadProductXml ToReadProductXml(ProductRead product)
+    {
+        return new ReadProductXml
+        {
+            product_id = product.product_id,
+            name = product.name,
+            description = product.description,
+            price = product.price,
+            unit = product.unit,
+            image = product.image,
+            discount = product.discount,
+            availability = product.availability,
+            brand = product.brand,
+            category = product.category,
+            rating = product.rating
+        };
+    }
+
+    private static List<ReadProductXml> ToReadProductXml(List<ProductRead> products)
+    {
+        List<ReadProductXml> productsXml = new List<ReadProductXml>();
+
+        foreach(var product in products)
+        {
+            ReadProductXml productXml = new ReadProductXml
+            {
+                product_id = product.product_id,
+                name = product.name,
+                description = product.description,
+                price = product.price,
+                unit = product.unit,
+                image = product.image,
+                discount = product.discount,
+                availability = product.availability,
+                brand = product.brand,
+                category = product.category,
+                rating = product.rating
+            };
+
+            productsXml.Add(productXml);
+        }
+
+        return productsXml;
     }
 }
