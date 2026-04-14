@@ -7,5 +7,5 @@ namespace MySoap.Services;
 public interface IProductSoapService
 {
     [OperationContract]
-    Task<SearchResult> SearchProductsAsync(string? term, double? minPrice, double? maxPrice);
+    Task<SearchResult> SearchProducts(string? term, double? minPrice, double? maxPrice);
 }
