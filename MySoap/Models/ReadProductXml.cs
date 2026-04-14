@@ -6,7 +6,7 @@ namespace MySoap.Models;
 [XmlType("Product")]
 public class ReadProductXml
 {
-    [XmlElement("product_id")]
+    [XmlAttribute("product_id")]
     public int product_id { get; set; }
 
     [XmlElement("name")]
