@@ -7,6 +7,7 @@ public class ProductSoapViewModel
     public string searchedTerm { get; set; } = String.Empty;
     public double? selectedMinPrice { get; set; }
     public double? selectedMaxPrice { get; set; }
-    public bool Found { get; set; }
+    public bool found { get; set; }
+    public string? errorMessage { get; set; }
     public SearchResult searchResult { get; set; } = new SearchResult();
 }
