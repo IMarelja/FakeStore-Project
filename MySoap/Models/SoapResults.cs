@@ -20,10 +20,3 @@ public class SearchResult
     [DataMember] public List<ProductSoap> Products { get; set; } = [];
     [DataMember] public int Count { get; set; }
 }
-
-[DataContract]
-public class ValidationResult
-{
-    [DataMember] public bool IsValid { get; set; }
-    [DataMember] public List<string> Messages { get; set; } = [];
-}
