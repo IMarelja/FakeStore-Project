@@ -1,9 +1,11 @@
 using System.Net.Http.Json;
 using FakeStore.ViewModel;
-using System.Xml.Serialization;
 using System.Linq;
-using System.Xml.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using MySoap.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace MySoap.Services;
 
@@ -11,11 +13,16 @@ public class ProductRestService : IProductRestService
 {
     private readonly IHttpClientFactory _httpFactory;
     private readonly IConfiguration _config;
+    private readonly IWebHostEnvironment _env;
 
-    public ProductRestService(IHttpClientFactory httpFactory, IConfiguration config)
+    public ProductRestService(
+        IHttpClientFactory httpFactory,
+        IConfiguration config,
+        IWebHostEnvironment env)
     {
         _httpFactory = httpFactory;
         _config = config;
+        _env = env;
     }
 
     public async Task<List<ReadProductXml>> GetAll()
@@ -28,7 +35,7 @@ public class ProductRestService : IProductRestService
             throw new InvalidOperationException(
                 "Missing API base URL. Configure Api:BaseUrl or ConnectionStrings:DefaultConnection.");
 
-        var response = await http.GetAsync($"{baseUrl}/products");
+        var response = await http.GetAsync($"{baseUrl}products");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -45,9 +52,29 @@ public class ProductRestService : IProductRestService
         return ToReadProductXml(products);
     }
 
-    public Task ToXmlFile(List<ReadProductXml> products)
+    public async Task ToXmlFile(List<ReadProductXml> products)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(products);
+
+        var xmlDirectory = Path.Combine(_env.ContentRootPath, "XML");
+        Directory.CreateDirectory(xmlDirectory);
+        var xmlPath = Path.Combine(xmlDirectory, "products.xml");
+        var productPayload = new ProductsXml { Products = products };
+
+
+        var serializer = new XmlSerializer(typeof(ProductsXml));
+
+        await using var stream = File.Create(xmlPath);
+        var settings = new XmlWriterSettings{
+            Async = true,
+            Indent = true,
+            Encoding = new UTF8Encoding(false)
+        };
+
+        await using var writer = XmlWriter.Create(stream, settings);
+
+        serializer.Serialize(writer, productPayload);
+        await writer.FlushAsync();
     }
 
     public Task<bool> VerifyXmlFile()
@@ -75,28 +102,6 @@ public class ProductRestService : IProductRestService
 
     private static List<ReadProductXml> ToReadProductXml(List<ProductRead> products)
     {
-        List<ReadProductXml> productsXml = new List<ReadProductXml>();
-
-        foreach(var product in products)
-        {
-            ReadProductXml productXml = new ReadProductXml
-            {
-                product_id = product.product_id,
-                name = product.name,
-                description = product.description,
-                price = product.price,
-                unit = product.unit,
-                image = product.image,
-                discount = product.discount,
-                availability = product.availability,
-                brand = product.brand,
-                category = product.category,
-                rating = product.rating
-            };
-
-            productsXml.Add(productXml);
-        }
-
-        return productsXml;
+        return products.Select(ToReadProductXml).ToList();
     }
 }
