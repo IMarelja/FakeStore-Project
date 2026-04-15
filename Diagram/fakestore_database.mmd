@@ -1,31 +1,23 @@
+---
+config:
+  layout: elk
+---
 erDiagram
-    BRAND ||--o{ PRODUCT : has
-    CATEGORY ||--o{ PRODUCT : groups
-    USER ||--o{ REVIEW : writes
+    USERS ||--o{ REVIEW : writes
     PRODUCT ||--o{ REVIEW : receives
-    USER ||--o{ CART : owns
+    USERS ||--o| CART : owns
     CART ||--o{ CART_ITEM : contains
-    PRODUCT ||--o{ CART_ITEM : appears_in
-    USER ||--o{ ORDER : places
-    ORDER_STATUS ||--o{ ORDER : tracks
-    ORDER ||--|{ ORDER_ITEM : contains
-    PRODUCT ||--o{ ORDER_ITEM : appears_in
+    PRODUCT ||--o{ CART_ITEM : includes
+    USERS ||--o{ ORDERS : places
+    ORDERS ||--o{ ORDER_ITEM : contains
+    PRODUCT ||--o{ ORDER_ITEM : includes
 
-    BRAND {
-        int brand_id PK
-        varchar name UK
-    }
-
-    CATEGORY {
-        int category_id PK
-        varchar name UK
-    }
-
-    USER {
+    USERS {
         int user_id PK
         varchar username UK
         varchar email UK
         varchar password
+        varchar role
     }
 
     PRODUCT {
@@ -37,8 +29,9 @@ erDiagram
         varchar image
         int discount
         boolean available
-        int brand_id FK
-        int category_id FK
+        varchar brand
+        varchar category
+        double rating
     }
 
     REVIEW {
@@ -51,25 +44,20 @@ erDiagram
 
     CART {
         int cart_id PK
-        int user_id FK
+        int user_id FK "unique"
     }
 
     CART_ITEM {
         int cart_item_id PK
-        int cart_id FK
-        int product_id FK
+        int cart_id FK "unique with product_id"
+        int product_id FK "unique with cart_id"
         int quantity
     }
 
-    ORDER_STATUS {
-        int order_status_id PK
-        varchar name UK
-    }
-
-    ORDER {
+    ORDERS {
         int order_id PK
         int user_id FK
-        int order_status_id FK
+        varchar order_status
         decimal total_price
     }
 

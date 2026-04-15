@@ -1,74 +1,37 @@
+%%{init: {"layout": "elk"}}%%
 flowchart LR
-    User[User]
+    classDef webapp fill:#eef2ff,stroke:#818cf8
+    classDef api fill:#f0fdfa,stroke:#2dd4bf
+    classDef graphql fill:#f5f3ff,stroke:#a78bfa
+    classDef soap fill:#fff7ed,stroke:#fb923c
+    classDef grpc fill:#f0f9ff,stroke:#38bdf8
+    classDef seeder fill:#f0fdf4,stroke:#4ade80
+    classDef external fill:#fff1f2,stroke:#fb7185
+    classDef db fill:#fdf4ff,stroke:#e879f9
+    classDef user fill:#fefce8,stroke:#facc15
 
-    subgraph Client["Client Desktop/Web Application"]
-        UI[GUI]
-        Roles[Roles: Read-only / Full access]
-        Switch[API switch: Public or Custom REST]
-    end
+    User[User]:::user
+    WebApp["WebApp (.NET MVC)"]:::webapp
+    CustomApi["MyRestAPI (Custom REST API)"]:::api
+    GraphQLApi["MyGraphQL (ASP.NET)"]:::graphql
+    SoapApi["MySoap (ASP.NET)"]:::soap
+    GrpcApi["gRPC (ASP.NET)"]:::grpc
+    Seeder["Dataseeder (.NET Console App)"]:::seeder
+    PublicAPI["Assigned Public REST API"]:::external
+    WeatherXML["Vrijeme.hr XML feed"]:::external
+    DB["PostgreSQL Docker database"]:::db
 
-    subgraph SoapFlow["SOAP Search Flow"]
-        XmlBuild[Generate XML from REST data]
-        XPath[XPath filter by search term]
-        SoapSvc[SOAP service response]
+    User --> WebApp
+    WebApp -->|Switch: Public API mode GET| PublicAPI
+    WebApp -->|Switch: Custom API mode GET/POST/PUT/DELETE| CustomApi
+    WebApp -->|Product search XML| SoapApi
+    WebApp -->|Weather search weather.proto| GrpcApi
 
-        subgraph JakartaFlow["Jakarta XML Validation"]
-            Jakarta[Validate generated XML rules]
-        end
-    end
+    CustomApi -->|Mutation/Query| GraphQLApi
+    GraphQLApi --> DB
 
-    subgraph Weathe rFlow["gRPC Weather Service"]
-        Grpc[gRPC server]
-    end
+    Seeder -->|GET| PublicAPI
+    Seeder -->|INSERT| DB
 
-    subgraph RestLayer["REST / GraphQL Layer"]
-        PublicApi[Public REST API]
-        CustomApi[Custom REST API]
-        Crud[GET / POST / PUT / DELETE]
-        JWT[JWT access + refresh tokens]
-        GraphQL[GraphQL endpoint]
-    end
-
-    subgraph RestPost["REST POST Import Flow"]
-        CheckJsonXML[XML and JSON checker]
-        XSD[XSD validation]
-        JSONSchema[JSON Schema validation]
-        Errors[Validation errors to user]
-        Save[Persist valid entity]
-    end
-
-    DB[(Application Database)]
-    DHMZ[(DHMZ XML Feed)]
-
-    User --> UI
-    UI --> Roles
-    UI --> Switch
-
-    CheckJsonXML --> PublicApi
-    PublicApi --> CheckJsonXML
-    CheckJsonXML -->|Is XML| XSD
-    CheckJsonXML -->|Is JSON| JSONSchema
-    XSD -->|invalid| Errors
-    JSONSchema -->|invalid| Errors
-    XSD -->|valid| Save
-    JSONSchema -->|valid| Save
-    Save --> DB
-
-    PublicApi --> XmlBuild
-    CustomApi --> XmlBuild
-    XPath --> SoapSvc
-
-    XmlBuild --> Jakarta
-    Jakarta --> XPath
-
-    UI --> |Search by city name or partial name| Grpc
-    Grpc --> |Responce| UI
-    DHMZ --> Grpc
-
-    Switch --> PublicApi
-    Switch --> CustomApi
-    Roles --> CustomApi
-    CustomApi --> Crud
-    CustomApi --> JWT
-    Crud --> GraphQL
-    GraphQL --> DB
+    SoapApi --> PublicAPI
+    GrpcApi --> WeatherXML

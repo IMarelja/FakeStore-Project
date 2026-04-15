@@ -7,6 +7,8 @@ Fakestore project for the "Interoperability of information systems" that impleme
 
 ## Projects
 
+![project architecture diagram](./Diagram/fakestore_project-architecture.png)
+
 ### Models
 Models that will be used for storing the data in the PostgreSQL database
 
@@ -25,10 +27,10 @@ A REST API server for Authenticating users, GET-ing, POST-ing, PUT-ing and DELET
 - "read-only" role can only access GET endpoints
 - "full access" role can access all endpoints
 
-## gRPC (ASP.NET)
+### gRPC (ASP.NET)
 A gRPC server for fetching the data from public weather information in an .xml format [Vrijeme.hr croatia](https://vrijeme.hr/hrvatska_n.xml), it allows search by city name
 
-## MySoap (ASP.NET)
+### MySoap (ASP.NET)
 A SOAP API server for fetching Product data from assigned Public API and has an endpoint for searching for Products
 - Verifies the XML data that it already has stored
 - On start it fetches the data from the Public API
@@ -56,3 +58,5 @@ A SOAP API server for fetching Product data from assigned Public API and has an 
     - CartItem
     - Order
     - OrderItem
+
+![database diagram](./Diagram/fakestore_database.png)
