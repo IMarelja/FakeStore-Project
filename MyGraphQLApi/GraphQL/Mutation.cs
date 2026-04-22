@@ -218,9 +218,9 @@ public class Mutation
         return item;
     }
 
-    public async Task<CartItem?> UpdateCartItem(int id, CartItemInput input, [Service] FakeStoreDbContext db)
+    public async Task<CartItem?> UpdateCartItem(CartItemInput input, [Service] FakeStoreDbContext db)
     {
-        var item = await db.CartItems.FindAsync(id);
+        var item = await db.CartItems.FindAsync(input.CartId);
         if (item is null) 
             return null;
 
