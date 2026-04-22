@@ -57,12 +57,15 @@ public class CartController : ControllerBase
         return cart is null ? NotFound() : CreatedAtAction(nameof(GetOwnCart), cart);
     }
 
-    // PUT /api/cart/me/{id}/item
-    [HttpPut("me/{id:int}/item")]
+    // PUT /api/cart/me/{productId}/item
+    [HttpPut("me/{productId:int}/item")]
     [Authorize(Roles = "full access")]
-    public async Task<ActionResult<CartReadDto>> EditItemToOwnCart(int id, [FromBody] CartItemEditDto req)
+    public async Task<ActionResult<CartReadDto>> EditItemToOwnCart(int productId, [FromBody] CartItemEditDto req)
     {
-        var cart = await _service.EditItemAsync(id, req);
+        var ownCart = await _service.GetByUserIdAsync(_claims.GetUserId());
+        if (ownCart is null) return NotFound();
+
+        var cart = await _service.EditItemAsync(ownCart.cart_id, productId, req);
         return cart is null ? NotFound() : Ok(cart);
     }
 

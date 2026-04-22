@@ -124,7 +124,7 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
         return await GetByIdAsync(cartId);
     }
 
-    public async Task<Cart?> EditItemAsync(int itemId, CartItemEditDto req)
+    public async Task<Cart?> EditItemAsync(int cartId, int productId, CartItemEditDto req)
     {
         const string mutation = """
             mutation($input: CartItemUpdateInput!) {
@@ -141,8 +141,9 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
         {
             input = new
             {
-                cartItemId = itemId,
-                quantity   = req.Quantity
+                cartId,
+                productId,
+                quantity = req.Quantity
             }
         });
 

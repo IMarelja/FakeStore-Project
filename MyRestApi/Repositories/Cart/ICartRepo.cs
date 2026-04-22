@@ -9,7 +9,7 @@ public interface ICartRepo
     Task<Cart?> GetByIdAsync(int cartId);
     Task<Cart?> GetByUserIdAsync(int userId);
     Task<Cart?> AddItemAsync(int cartId, CartItemAddDto req);
-    Task<Cart?> EditItemAsync(int itemId, CartItemEditDto req);
+    Task<Cart?> EditItemAsync(int cartId, int productId, CartItemEditDto req);
     Task<bool> RemoveItemAsync(int itemId);
     Task<bool> RemoveItemByUserAndProductAsync(int userId, int productId);
     Task<bool> DeleteCartAsync(int cartId);

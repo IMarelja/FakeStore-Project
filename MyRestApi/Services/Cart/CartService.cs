@@ -30,9 +30,9 @@ public class CartService(ICartRepo repo) : ICartService
         return cart is null ? null : ToDto(cart);
     }
 
-    public async Task<CartReadDto?> EditItemAsync(int itemId, CartItemEditDto req)
+    public async Task<CartReadDto?> EditItemAsync(int cartId, int productId, CartItemEditDto req)
     {
-        var cart = await repo.EditItemAsync(itemId, req);
+        var cart = await repo.EditItemAsync(cartId, productId, req);
         return cart is null ? null : ToDto(cart);
     }
 
