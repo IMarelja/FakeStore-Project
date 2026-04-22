@@ -127,7 +127,7 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
     public async Task<Cart?> EditItemAsync(int cartId, int productId, CartItemEditDto req)
     {
         const string mutation = """
-            mutation($input: CartItemUpdateInput!) {
+            mutation($input: CartItemInput!) {
               updateCartItem(input: $input) {
                 cartItemId
                 cartId
@@ -151,7 +151,6 @@ public class CartGraphQLRepo(IHttpClientFactory factory) : ICartRepo
         if (itemEl.ValueKind == JsonValueKind.Null)
             return null;
 
-        var cartId = itemEl.GetProperty("cartId").GetInt32();
         return await GetByIdAsync(cartId);
     }
 
