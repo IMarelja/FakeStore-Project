@@ -1,0 +1,106 @@
+# Mirrors the "Custom: WebApp + gRPC + SOAP + MyRestApi + MyGraphQLApi" launch compound
+# in .vscode/launch.json: WebApp talks to the custom REST API (JWT + GraphQL-backed).
+#
+# Expected order of operations:
+#   1. docker compose up --build --abort-on-container-failure   (starts the database)
+#   2. ./scripts/run-dataseeder.sh                               (seeds the database)
+#   3. docker compose -f docker-compose.custom.yml up --build --abort-on-container-failure
+#
+# Run from the same directory as docker-compose.yaml so this joins the same
+# default network and can reach the "postgres-medical" container by name.
+services:
+  mygraphqlapi:
+    build:
+      context: .
+      dockerfile: MyGraphQLApi/Dockerfile
+    container_name: fakestore-graphql
+    ports:
+      - "5046:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Host=postgres-medical;Port=5432;Database=fakestore;Username=postgres;Password=password"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  myrestapi:
+    build:
+      context: .
+      dockerfile: MyRestApi/Dockerfile
+    container_name: fakestore-restapi
+    ports:
+      - "5250:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      GraphQL__BaseUrl: "http://mygraphqlapi:8080/"
+    depends_on:
+      mygraphqlapi:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  grpc:
+    build:
+      context: .
+      dockerfile: gRPC/Dockerfile
+    container_name: fakestore-grpc
+    ports:
+      - "5009:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  mysoap:
+    build:
+      context: .
+      dockerfile: MySoap/Dockerfile
+    container_name: fakestore-soap
+    ports:
+      - "5123:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  webapp:
+    build:
+      context: .
+      dockerfile: WebApp/Dockerfile
+    container_name: fakestore-webapp
+    ports:
+      - "5197:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      GrpcServer: "http://grpc:8080"
+      SoapService__BaseUrl: "http://mysoap:8080/ProductService.asmx"
+      ApiSelector__Selected: "Custom"
+      ApiSelector__Apis__Custom: "http://myrestapi:8080/api/"
+    depends_on:
+      grpc:
+        condition: service_healthy
+      mysoap:
+        condition: service_healthy
+      myrestapi:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s

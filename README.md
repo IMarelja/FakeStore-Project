@@ -2,61 +2,49 @@
 
 Fakestore project for the "Interoperability of information systems" that implements MVC, Rest API, GraphQL API, SOAP API and PostgreSQL database
 
-*Course assigned Public REST API*: https://app.beeceptor.com/mock-server/fake-store-api
+- Project requirements [here](docs/project_requirements.md)
+- *Course assigned Public REST API*: https://app.beeceptor.com/mock-server/fake-store-api
 
+## Installation
 
-## Projects
+Prerequisites: Docker + Docker Compose, and the .NET 8 SDK.
 
-![project architecture diagram](./Diagram/fakestore_project-architecture.png)
+Run these in order, from the repo root:
 
-### Models
-Models that will be used for storing the data in the PostgreSQL database
+1. **Start the database:**
 
-### ViewModels
-ViewModels that will be used for retriving data from my own Rest API implemetation and assigned Public REST API.
+   ```sh
+   docker compose up --build --abort-on-container-failure -d
+   ```
 
-### Dataseeder (.NET Console App)
-Gets data from course assigned Public API to be inputs it into PostgreSQL
+2. **Seed it**
 
-### MyGraphQL (ASP.NET)
-A GraphQL API server for Queries and Mutates data from the PostgreSQL database
+   ```sh
+   ./scripts/run-dataseeder.sh
+   ```
 
-### MyRestAPI (ASP.NET) [name: Custom API]
-A REST API server for Authenticating users, GET-ing, POST-ing, PUT-ing and DELETING-ing data. It is a wrapper for MyGraphQL project.
-- Authentication controller is fully public and it is used to get the JWT token that contains the proper role
-- "read-only" role can only access GET endpoints
-- "full access" role can access all endpoints
+3. **Pick a mode to run:**
 
-### gRPC (ASP.NET)
-A gRPC server for fetching the data from public weather information in an .xml format [Vrijeme.hr croatia](https://vrijeme.hr/hrvatska_n.xml), it allows search by city name
+    - **Public** — WebApp, gRPC and SOAP against the public course API.
+    1. Run this command to build the project and run it
 
-### MySoap (ASP.NET)
-A SOAP API server for fetching Product data from assigned Public API and has an endpoint for searching for Products
-- Verifies the XML data that it already has stored
-- On start it fetches the data from the Public API
-- Initializes the endpoint for searching products by "keyword", "Minimal price" and "Maximum price" 
+    ```sh
+    docker compose -f docker-compose.public.yml up --build --abort-on-container-failure
+    ```
 
-### WebApp (.NET MVC)
-- Weather search page
-- Product search from SOAP interface
-- Switch between Public API and Custom API
-    - Public API
-        - Will use all the GET endpoints from the Public API to fetch data and list them
-    - Custom API
-        - Support Login and Registration
-        - JWT token implementation 
-        - Read-only users can read data
-        - Full access users can read, create, modify and delete data
+    - **Custom** — WebApp, gRPC, SOAP MyRestApi and MyGraphQLApi, backed by the database from
+    1. Run this command to build the project and run it
 
-### PostgreSQL (Docker)
-- Stores all the data that will be read by GraphQL
-- Tables:
-    - Users
-    - Products
-    - Reviews
-    - Cart
-    - CartItem
-    - Order
-    - OrderItem
+     ```sh
+     docker compose -f docker-compose.custom.yml up --build --abort-on-container-failure
+     ```
 
-![database diagram](./Diagram/fakestore_database.png)
+Endpoints: 
+- WebApp http://localhost:5197
+- RestApi (Swagger) http://localhost:5250/swagger
+- MyGraphQLApi http://localhost:5046/graphql
+- SOAP WSDL http://localhost:5123/ProductService.asmx?WSDL
+
+## Documentation
+
+- [Projects](docs/projects.md) — overview of each project in this repo

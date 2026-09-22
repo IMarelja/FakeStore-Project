@@ -1,0 +1,62 @@
+# Mirrors the "Public: WebApp + gRPC + SOAP" launch compound in .vscode/launch.json:
+# WebApp talks to the course-assigned public REST API directly, gRPC serves live
+# weather data, and SOAP serves product search. No database or seeding needed.
+#
+# Run with:
+#   docker compose -f docker-compose.public.yml up --build --abort-on-container-failure
+services:
+  grpc:
+    build:
+      context: .
+      dockerfile: gRPC/Dockerfile
+    container_name: fakestore-grpc
+    ports:
+      - "5009:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  mysoap:
+    build:
+      context: .
+      dockerfile: MySoap/Dockerfile
+    container_name: fakestore-soap
+    ports:
+      - "5123:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  webapp:
+    build:
+      context: .
+      dockerfile: WebApp/Dockerfile
+    container_name: fakestore-webapp
+    ports:
+      - "5197:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      GrpcServer: "http://grpc:8080"
+      SoapService__BaseUrl: "http://mysoap:8080/ProductService.asmx"
+      ApiSelector__Selected: "Public"
+    depends_on:
+      grpc:
+        condition: service_healthy
+      mysoap:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s

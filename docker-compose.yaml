@@ -8,8 +8,13 @@ services:
       POSTGRES_DB: "fakestore"
       POSTGRES_PASSWORD: "password"
     volumes:
-      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - postgres_data_fakestore:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d fakestore"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   postgres_data_fakestore:
