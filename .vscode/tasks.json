@@ -37,6 +37,13 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "build: MySoap",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/MySoap/MySoap.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "open: Swagger UI",
       "type": "shell",
       "command": "xdg-open http://localhost:5250/swagger",
